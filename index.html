@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אפליקציית האהבה שלנו - דף הבית</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffe6e6;
+            color: #333;
+            direction: rtl;
+        }
+        h1 {
+            color: #ff4d4d;
+            text-align: center;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #menu {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        #menu a {
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        #menu a:hover {
+            background-color: #ff3333;
+        }
+        .export-import-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .export-import-container button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .export-import-container button:hover {
+            background-color: #ff3333;
+        }
+    </style>
+</head>
+<body>
+    <h1>אפליקציית האהבה של אריק ושני</h1>
+    
+    <div id="menu">
+        <a href="index.html">דף הבית</a>
+        <a href="gallery.html">גלריית תמונות</a>
+        <a href="notes.html">פתקי אהבה</a>
+        <a href="cats.html">חתולים טובים</a>
+        <a href="puzzle.html">משחק פאזל</a>
+        <a href="gifts.html">מתנות לקנייה</a>
+        <a href="countdown.html">ספירה לאחור</a>
+        <a href="bucketlist.html">רשימת יעדים</a>
+        <a href="memory.html">משחק זיכרון</a>
+        <a href="either-or.html">משחק או-או</a>
+    </div>
+
+    <div class="section">
+        <h2>ברוכים הבאים לאפליקציית האהבה שלנו</h2>
+        <p>אפליקציה זו היא חגיגה של האהבה שלנו. השתמשו בתפריט כדי לנווט בין האפשרויות השונות.</p>
+       
+    </div>
+    
+    <div class="export-import-container">
+        <h3>שיתוף נתונים</h3>
+        <p>ניתן לשתף את כל הנתונים באפליקציה (פתקי אהבה, שיאי משחקים וכו') באמצעות כפתורי הייצוא והייבוא.</p>
+        <button id="export-btn">ייצא נתונים</button>
+        <button id="import-btn">ייבא נתונים</button>
+    </div>
+    
+    <script>
+        // פונקציות לייצוא ויבוא נתונים מה-localStorage
+        
+        function exportData() {
+            // איסוף כל הנתונים מ-localStorage
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                // נסנן רק את המפתחות הרלוונטיים לאפליקציה שלנו
+                if (key.startsWith('loveNotes') || key.startsWith('galleryImages') || 
+                    key.startsWith('catImages') || key.startsWith('flappyScores') || 
+                    key.startsWith('puzzleScores')) {
+                    data[key] = localStorage.getItem(key);
+                }
+            }
+            
+            // המרה לטקסט והורדה כקובץ
+            const dataStr = JSON.stringify(data);
+            const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = "love_app_data.json";
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        // הכנסת הנתונים ל-localStorage
+                        Object.keys(data).forEach(key => {
+                            localStorage.setItem(key, data[key]);
+                        });
+                        
+                        alert('הנתונים יובאו בהצלחה! הדף יטען מחדש כדי לשקף את השינויים.');
+                        location.reload(); // טעינה מחדש של הדף להצגת הנתונים החדשים
+                    } catch (error) {
+                        alert('שגיאה ביבוא הנתונים. ודא שזהו קובץ תקין.');
+                        console.error('Import error:', error);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
+        // הוספת מאזינים לכפתורים
+        document.getElementById('export-btn').addEventListener('click', exportData);
+        document.getElementById('import-btn').addEventListener('click', importData);
+    </script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אפליקציית האהבה שלנו - גלריית תמונות</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffe6e6;
+            color: #333;
+            direction: rtl;
+        }
+        h1 {
+            color: #ff4d4d;
+            text-align: center;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #menu {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        #menu a {
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+        }
+        #menu a:hover {
+            background-color: #ff3333;
+        }
+        #gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        #gallery img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            margin: 10px;
+            border-radius: 4px;
+        }
+        .image-container {
+            position: relative;
+            margin: 10px;
+        }
+        .image-caption {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>אפליקציית האהבה שלנו</h1>
+    
+    <div id="menu">
+        <a href="index.html">דף הבית</a>
+        <a href="gallery.html">גלריית תמונות</a>
+        <a href="notes.html">פתקי אהבה</a>
+        <a href="cats.html">חתולים טובים</a>
+        <a href="puzzle.html">משחק פאזל</a>
+        <a href="gifts.html">מתנות לקנייה</a>
+        <a href="countdown.html">ספירה לאחור</a>
+        <a href="bucketlist.html">רשימת יעדים</a>
+        <a href="memory.html">משחק זיכרון</a>
+        <a href="either-or.html">משחק או-או</a>
+    </div>
+
+    <div class="section">
+        <h2>גלריית תמונות</h2>
+        <div id="gallery">
+            <!-- Replace these with your actual photos -->
+            <div class="image-container">
+                <img src="images/hag-mold.jpg" alt="חוגגים חג המולד בחיפה">
+                <div class="image-caption">חוגגים חג המולד בחיפה</div>
+            </div>
+            <div class="image-container">
+                <img src="images/escape.jpg" alt="חדר בריחה">
+                <div class="image-caption">חדר בריחה</div>
+            </div>
+            <div class="image-container">
+                <img src="images/keis.jpg" alt="מבלים בקיסריה">
+                <div class="image-caption">מבלים בקיסריה</div>
+            </div>
+            <div class="image-container">
+                <img src="images/young.jpeg" alt="צעירים ויפים">
+                <div class="image-caption">צעירים ויפים</div>
+            </div>
+            <div class="image-container">
+                <img src="images/out.jpeg" alt="ערב סרט">
+                <div class="image-caption">פסטיבל טבעוני </div>
+            </div>
+            <div class="image-container">
+                <img src="images/bud.jpeg" alt="יום בים">
+                <div class="image-caption">הכי יפה בעולם</div>
+            </div>
+            <div class="image-container">
+                <img src="images/bit.jpeg" alt="יום בים">
+                <div class="image-caption">תמיד שומרת על הבטחון</div>
+            </div>
+            <div class="image-container">
+                <img src="images/keis1.jpg" alt=" 2מבלים בקיסריה">
+                <div class="image-caption">מבלים בקיסריה2</div>
+            </div>
+            <div class="image-container">
+                <img src="images/eat.jpeg" alt="מבלים בקיסריה">
+                <div class="image-caption">בחורה רעבה</div>
+            </div>
+            <div class="image-container">
+                <img src="images/fancy.jpeg" alt="מבלים בקיסריה">
+                <div class="image-caption">פנסיי</div>
+        </div>
+        <div class="image-container">
+            <img src="images/laug.jpeg" alt="מבלים בקיסריה3">
+            <div class="image-caption">מבלים בקיסריה3</div>
+        </div>
+        <div class="image-container">
+            <img src="images/esc2.jpeg" alt="חדר בריחה שני">
+            <div class="image-caption">חדר בריחה שני</div>
+        </div>
+        <div class="image-container">
+            <img src="images/esc.jpeg" alt="חדר בריחה שני2">
+            <div class="image-caption">חדר בריחה שני2</div>
+        </div>
+        <div class="image-container">
+            <img src="images/pt.jpeg" alt="תל אפק">
+            <div class="image-caption">תל אפק</div>
+        </div>
+        <div class="image-container">
+            <img src="images/movie.jpg" alt="מבלים בקיסריה">
+            <div class="image-caption">קולנוע</div>
+        </div>
+        <div class="image-container">
+            <img src="images/news.jpeg" alt="מבלים בקיסריה">
+            <div class="image-caption">והרי החדשות</div>
+        </div>
+        <div class="image-container">
+            <img src="images/goth.jpg" alt="מבלים בקיסריה">
+            <div class="image-caption">אריק גותי</div>
+        </div>
+        <div class="image-container">
+            <img src="images/nost.jpeg" alt="מבלים בקיסריה">
+            <div class="image-caption">נוסטלגיה</div>
+        </div>
+        <div class="image-container">
+            <img src="images/tele.jpeg" alt="מבלים בקיסריה">
+            <div class="image-caption">?אז את שומעת</div>
+        </div>
+        <div class="image-container">
+            <img src="images/gre.jpeg" alt="מבלים בקיסריה">
+            <div class="image-caption">כרתים</div>
+        </div>
+        <div class="image-container">
+            <img src="images/ilos.jpeg" alt="מבלים בקיסריה">
+            <div class="image-caption">אשליותתת</div>
+        </div>
+        <div class="image-container">
+            <img src="images/top.jpeg" alt="מבלים בקיסריה">
+            <div class="image-caption">אימ און טופ אוף דה כרמל</div>
+        </div>
+        <div class="image-container">
+            <img src="images/hai.jpeg" alt="מבלים בקיסריה">
+            <div class="image-caption">כמה שיער</div>
+        </div>
+        <div class="image-container">
+            <img src="images/pin.jpeg" alt="מבלים בקיסריה">
+            <div class="image-caption">משחקים ונהנים</div>
+        </div>
+        <div class="image-container">
+            <img src="images/givat.jpg" alt="מבלים בקיסריה">
+            <div class="image-caption">איזה ארוחה</div>
+        </div>
+        <div class="image-container">
+            <img src="images/fondo.jpg" alt="מבלים בקיסריה">
+            <div class="image-caption">ארוחת פונדו מדהימה</div>
+        </div>
+        <div class="image-container">
+            <img src="images/us.jpeg" alt="מבלים בקיסריה">
+            <div class="image-caption">just the two of us</div>
+        </div>
+    </div>
+</body>
+</html>

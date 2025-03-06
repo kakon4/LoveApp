@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אפליקציית האהבה שלנו - רשימת יעדים משותפת</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffe6e6;
+            color: #333;
+            direction: rtl;
+        }
+        h1 {
+            color: #ff4d4d;
+            text-align: center;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #menu {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        #menu a {
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        #menu a:hover {
+            background-color: #ff3333;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ff4d4d;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: #ff4d4d;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], 
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff3333;
+        }
+        .item-form {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ffcccc;
+            padding-bottom: 20px;
+        }
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+        }
+        .filter-group label {
+            margin-bottom: 0;
+            margin-left: 10px;
+        }
+        .filter-group select {
+            width: auto;
+        }
+        .items-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .bucket-item {
+            background-color: #fff0f0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        .bucket-item:hover {
+            transform: translateY(-5px);
+        }
+        .item-category {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 77, 77, 0.8);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .item-image {
+            height: 150px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .item-image-placeholder {
+            font-size: 36px;
+            color: #ddd;
+        }
+        .item-content {
+            padding: 15px;
+        }
+        .item-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .item-description {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 14px;
+            height: 60px;
+            overflow: hidden;
+        }
+        .item-link {
+            display: inline-block;
+            margin-top: 5px;
+            color: #ff4d4d;
+            text-decoration: none;
+        }
+        .item-link:hover {
+            text-decoration: underline;
+        }
+        .item-rating {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stars {
+            color: #ffc107;
+            font-size: 18px;
+        }
+        .item-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .item-actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .move-btn {
+            background-color: #4caf50;
+        }
+        .move-btn:hover {
+            background-color: #388e3c;
+        }
+        .delete-btn {
+            background-color: #f44336;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        .export-import-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .export-import-container button {
+            margin: 0 10px;
+        }
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff0f0;
+            border-radius: 8px;
+        }
+        .random-item-btn {
+            margin-bottom: 20px;
+            background-color: #9c27b0;
+        }
+        .random-item-btn:hover {
+            background-color: #7b1fa2;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 70%;
+            max-width: 600px;
+        }
+        .modal-title {
+            color: #ff4d4d;
+            margin-top: 0;
+        }
+        .close-btn {
+            color: #aaa;
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .highlight-item {
+            animation: highlight 1.5s ease-in-out;
+        }
+        @keyframes highlight {
+            0% { background-color: #fff0f0; }
+            50% { background-color: #ffcccc; }
+            100% { background-color: #fff0f0; }
+        }
+    </style>
+</head>
+<body>
+    <h1>אפליקציית האהבה שלנו</h1>
+    
+    <div id="menu">
+        <a href="index.html">דף הבית</a>
+        <a href="gallery.html">גלריית תמונות</a>
+        <a href="notes.html">פתקי אהבה</a>
+        <a href="cats.html">חתולים טובים</a>
+        <a href="puzzle.html">משחק פאזל</a>
+        <a href="gifts.html">מתנות לקנייה</a>
+        <a href="countdown.html">ספירה לאחור</a>
+        <a href="bucketlist.html">רשימת יעדים</a>
+        <a href="memory.html">משחק זיכרון</a>
+        <a href="either-or.html">משחק או-או</a>
+    </div>
+
+    <div class="section">
+        <h2>המסע המשותף שלנו</h2>
+        
+        <!-- כפתורי טאבים -->
+        <div class="tabs">
+            <button class="tab active" id="futureTab">היעדים העתידיים שלנו</button>
+            <button class="tab" id="memoriesTab">חוויות שחווינו יחד</button>
+        </div>
+        
+        <!-- תוכן היעדים העתידיים -->
+        <div id="futureContent" class="tab-content active">
+            <div class="item-form">
+                <h3>הוסיפו יעד חדש לעתיד</h3>
+                <div class="form-group">
+                    <label for="futureTitle">שם היעד:</label>
+                    <input type="text" id="futureTitle" placeholder="למשל: טיול בצפון איטליה">
+                </div>
+                <div class="form-group">
+                    <label for="futureDescription">תיאור:</label>
+                    <textarea id="futureDescription" placeholder="פרטים על היעד..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="futureLink">קישור (אופציונלי):</label>
+                    <input type="url" id="futureLink" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="futureCategory">קטגוריה:</label>
+                    <select id="futureCategory">
+                        <option value="travel">טיולים ומקומות</option>
+                        <option value="food">אוכל ומסעדות</option>
+                        <option value="activities">פעילויות ואטרקציות</option>
+                        <option value="culture">תרבות ואמנות</option>
+                        <option value="learning">למידה ומיומנויות</option>
+                        <option value="other">אחר</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="futureImportance">חשיבות:</label>
+                    <select id="futureImportance">
+                        <option value="1">1 - נמוכה</option>
+                        <option value="2">2 - בינונית-נמוכה</option>
+                        <option value="3" selected>3 - בינונית</option>
+                        <option value="4">4 - בינונית-גבוהה</option>
+                        <option value="5">5 - גבוהה</option>
+                    </select>
+                </div>
+                <button id="addFutureBtn">הוסף ליעדים העתידיים</button>
+            </div>
+            
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label for="futureFilter">סינון לפי:</label>
+                    <select id="futureFilter">
+                        <option value="all">הכל</option>
+                        <option value="travel">טיולים ומקומות</option>
+                        <option value="food">אוכל ומסעדות</option>
+                        <option value="activities">פעילויות ואטרקציות</option>
+                        <option value="culture">תרבות ואמנות</option>
+                        <option value="learning">למידה ומיומנויות</option>
+                        <option value="other">אחר</option>
+                    </select>
+                </div>
+                
+                <button class="random-item-btn" id="randomFutureBtn">יעד אקראי</button>
+            </div>
+            
+            <div id="futureItems" class="items-container">
+                <!-- כאן ייווצרו היעדים העתידיים -->
+                <div class="empty-message">אין עדיין יעדים ברשימה. הוסיפו את היעד הראשון!</div>
+            </div>
+        </div>
+        
+        <!-- תוכן החוויות שכבר חווינו -->
+        <div id="memoriesContent" class="tab-content">
+            <div class="item-form">
+                <h3>הוסיפו חוויה משותפת שחוויתם</h3>
+                <div class="form-group">
+                    <label for="memoryTitle">שם החוויה:</label>
+                    <input type="text" id="memoryTitle" placeholder="למשל: מסעדת השף בתל אביב">
+                </div>
+                <div class="form-group">
+                    <label for="memoryDescription">תיאור:</label>
+                    <textarea id="memoryDescription" placeholder="תיאור החוויה..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="memoryLink">קישור (אופציונלי):</label>
+                    <input type="url" id="memoryLink" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="memoryCategory">קטגוריה:</label>
+                    <select id="memoryCategory">
+                        <option value="travel">טיולים ומקומות</option>
+                        <option value="food">אוכל ומסעדות</option>
+                        <option value="activities">פעילויות ואטרקציות</option>
+                        <option value="culture">תרבות ואמנות</option>
+                        <option value="learning">למידה ומיומנויות</option>
+                        <option value="other">אחר</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="memoryRating">דירוג החוויה:</label>
+                    <select id="memoryRating">
+                        <option value="1">1 - לא אהבנו</option>
+                        <option value="2">2 - בינוני-נמוך</option>
+                        <option value="3" selected>3 - בינוני</option>
+                        <option value="4">4 - טוב מאוד</option>
+                        <option value="5">5 - מעולה!</option>
+                    </select>
+                </div>
+                <button id="addMemoryBtn">הוסף לחוויות המשותפות</button>
+            </div>
+            
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label for="memoryFilter">סינון לפי:</label>
+                    <select id="memoryFilter">
+                        <option value="all">הכל</option>
+                        <option value="travel">טיולים ומקומות</option>
+                        <option value="food">אוכל ומסעדות</option>
+                        <option value="activities">פעילויות ואטרקציות</option>
+                        <option value="culture">תרבות ואמנות</option>
+                        <option value="learning">למידה ומיומנויות</option>
+                        <option value="other">אחר</option>
+                    </select>
+                </div>
+                
+                <button class="random-item-btn" id="randomMemoryBtn">חוויה אקראית</button>
+            </div>
+            
+            <div id="memoryItems" class="items-container">
+                <!-- כאן ייווצרו החוויות שכבר חווינו -->
+                <div class="empty-message">אין עדיין חוויות ברשימה. הוסיפו את החוויה הראשונה!</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- מודאל לתצוגת פריט אקראי -->
+    <div id="randomModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3 class="modal-title" id="randomTitle">פריט אקראי</h3>
+            <div id="randomContent"></div>
+        </div>
+    </div>
+    
+    <div class="export-import-container">
+        <button id="exportBtn">ייצא נתונים</button>
+        <button id="importBtn">ייבא נתונים</button>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // מאגרי נתונים
+            let futureItems = JSON.parse(localStorage.getItem('bucketlist_future') || '[]');
+            let memoryItems = JSON.parse(localStorage.getItem('bucketlist_memories') || '[]');
+            
+            // טאבים
+            const futureTab = document.getElementById('futureTab');
+            const memoriesTab = document.getElementById('memoriesTab');
+            const futureContent = document.getElementById('futureContent');
+            const memoriesContent = document.getElementById('memoriesContent');
+            
+            // טפסים
+            const addFutureBtn = document.getElementById('addFutureBtn');
+            const addMemoryBtn = document.getElementById('addMemoryBtn');
+            
+            // סינון
+            const futureFilter = document.getElementById('futureFilter');
+            const memoryFilter = document.getElementById('memoryFilter');
+            
+            // אקראי
+            const randomFutureBtn = document.getElementById('randomFutureBtn');
+            const randomMemoryBtn = document.getElementById('randomMemoryBtn');
+            const randomModal = document.getElementById('randomModal');
+            const closeBtn = document.querySelector('.close-btn');
+            
+            // ייצוא/ייבוא
+            const exportBtn = document.getElementById('exportBtn');
+            const importBtn = document.getElementById('importBtn');
+            
+            // אירועי הוספת פריטים
+            addFutureBtn.addEventListener('click', function() {
+                addItem('future');
+            });
+            
+            addMemoryBtn.addEventListener('click', function() {
+                addItem('memory');
+            });
+            
+            // מעבר בין טאבים
+            futureTab.addEventListener('click', function() {
+                showTab('future');
+            });
+            
+            memoriesTab.addEventListener('click', function() {
+                showTab('memory');
+            });
+            
+            // סינון פריטים
+            futureFilter.addEventListener('change', function() {
+                renderItems('future', this.value);
+            });
+            
+            memoryFilter.addEventListener('change', function() {
+                renderItems('memory', this.value);
+            });
+            
+            // כפתורי אקראי
+            randomFutureBtn.addEventListener('click', function() {
+                showRandomItem('future');
+            });
+            
+            randomMemoryBtn.addEventListener('click', function() {
+                showRandomItem('memory');
+            });
+            
+            // סגירת מודאל
+            closeBtn.addEventListener('click', function() {
+                randomModal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === randomModal) {
+                    randomModal.style.display = 'none';
+                }
+            });
+            
+            // ייצוא/ייבוא
+            exportBtn.addEventListener('click', exportData);
+            importBtn.addEventListener('click', importData);
+            
+            // טעינה ראשונית
+            renderItems('future', 'all');
+            renderItems('memory', 'all');
+            
+            // פונקציות
+            
+            // הוספת פריט חדש
+            function addItem(type) {
+                let title, description, link, category, rating;
+                
+                if (type === 'future') {
+                    title = document.getElementById('futureTitle').value.trim();
+                    description = document.getElementById('futureDescription').value.trim();
+                    link = document.getElementById('futureLink').value.trim();
+                    category = document.getElementById('futureCategory').value;
+                    rating = document.getElementById('futureImportance').value;
+                } else {
+                    title = document.getElementById('memoryTitle').value.trim();
+                    description = document.getElementById('memoryDescription').value.trim();
+                    link = document.getElementById('memoryLink').value.trim();
+                    category = document.getElementById('memoryCategory').value;
+                    rating = document.getElementById('memoryRating').value;
+                }
+                
+                if (!title) {
+                    alert(type === 'future' ? 'נא להזין שם ליעד' : 'נא להזין שם לחוויה');
+                    return;
+                }
+                
+                const newItem = {
+                    id: Date.now(),
+                    title: title,
+                    description: description,
+                    link: link,
+                    category: category,
+                    rating: rating
+                };
+                
+                if (type === 'future') {
+                    futureItems.push(newItem);
+                    localStorage.setItem('bucketlist_future', JSON.stringify(futureItems));
+                    
+                    // ניקוי טופס
+                    document.getElementById('futureTitle').value = '';
+                    document.getElementById('futureDescription').value = '';
+                    document.getElementById('futureLink').value = '';
+                    
+                    renderItems('future', futureFilter.value);
+                } else {
+                    memoryItems.push(newItem);
+                    localStorage.setItem('bucketlist_memories', JSON.stringify(memoryItems));
+                    
+                    // ניקוי טופס
+                    document.getElementById('memoryTitle').value = '';
+                    document.getElementById('memoryDescription').value = '';
+                    document.getElementById('memoryLink').value = '';
+                    
+                    renderItems('memory', memoryFilter.value);
+                }
+            }
+            
+            // רינדור הפריטים
+            function renderItems(type, filter) {
+                const container = type === 'future' ? document.getElementById('futureItems') : document.getElementById('memoryItems');
+                const items = type === 'future' ? futureItems : memoryItems;
+                
+                // ניקוי
+                container.innerHTML = '';
+                
+                // סינון
+                const filteredItems = filter === 'all' ? 
+                    items : 
+                    items.filter(item => item.category === filter);
+                
+                // אם אין פריטים
+                if (filteredItems.length === 0) {
+                    container.innerHTML = `<div class="empty-message">
+                        אין עדיין ${type === 'future' ? 'יעדים' : 'חוויות'} ברשימה. 
+                        הוסיפו את ה${type === 'future' ? 'יעד' : 'חוויה'} הראשון/ה!
+                    </div>`;
+                    return;
+                }
+                
+                // מיון לפי דירוג
+                filteredItems.sort((a, b) => b.rating - a.rating);
+                
+                // יצירת הפריטים
+                filteredItems.forEach(item => {
+                    // קביעת אייקון לפי קטגוריה
+                    let categoryIcon = '🏙️';
+                    let categoryName = 'טיולים ומקומות';
+                    
+                    switch(item.category) {
+                        case 'travel':
+                            categoryIcon = '🏙️';
+                            categoryName = 'טיולים ומקומות';
+                            break;
+                        case 'food':
+                            categoryIcon = '🍽️';
+                            categoryName = 'אוכל ומסעדות';
+                            break;
+                        case 'activities':
+                            categoryIcon = '🎯';
+                            categoryName = 'פעילויות ואטרקציות';
+                            break;
+                        case 'culture':
+                            categoryIcon = '🎭';
+                            categoryName = 'תרבות ואמנות';
+                            break;
+                        case 'learning':
+                            categoryIcon = '📚';
+                            categoryName = 'למידה ומיומנויות';
+                            break;
+                        case 'other':
+                            categoryIcon = '✨';
+                            categoryName = 'אחר';
+                            break;
+                    }
+                    
+                    // יצירת כוכבים
+                    let stars = '';
+                    for (let i = 1; i <= 5; i++) {
+                        stars += i <= item.rating ? '★' : '☆';
+                    }
+                    
+                    // יצירת אלמנט
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'bucket-item';
+                    itemElement.dataset.id = item.id;
+                    
+                    let itemHTML = `
+                        <div class="item-category">${categoryIcon} ${categoryName}</div>
+                        <div class="item-image">
+                            <div class="item-image-placeholder">${categoryIcon}</div>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-title">${item.title}</div>
+                            <div class="item-description">${item.description}</div>
+                            ${item.link ? `<a href="${item.link}" class="item-link" target="_blank">קישור לאתר</a>` : ''}
+                            <div class="item-rating">
+                                <div class="stars">${stars}</div>
+                                <div>${type === 'future' ? 'חשיבות' : 'דירוג החוויה'}: ${item.rating}/5</div>
+                            </div>
+                            <div class="item-actions">
+                                ${type === 'future' ? 
+                                    `<button class="move-btn" data-id="${item.id}">✓ ביצענו</button>` :
+                                    ''
+                                }
+                                <button class="delete-btn" data-id="${item.id}">🗑️ מחק</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    itemElement.innerHTML = itemHTML;
+                    container.appendChild(itemElement);
+                    
+                    // הוספת אירועים לכפתורים
+                    if (type === 'future') {
+                        const moveBtn = itemElement.querySelector('.move-btn');
+                        if (moveBtn) {
+                            moveBtn.addEventListener('click', function() {
+                                const itemId = parseInt(this.dataset.id);
+                                moveToMemories(itemId);
+                            });
+                        }
+                    }
+                    
+                    const deleteBtn = itemElement.querySelector('.delete-btn');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function() {
+                            const itemId = parseInt(this.dataset.id);
+                            deleteItem(type, itemId);
+                        });
+                    }
+                });
+            }
+            
+            // העברה מיעדים לחוויות
+            function moveToMemories(id) {
+                const item = futureItems.find(item => item.id === id);
+                if (!item) return;
+                
+                const rating = prompt(`כמה נהניתם מ"${item.title}"? (דרג מ-1 עד 5)`, '5');
+                if (rating === null) return;
+                
+                const newMemory = {
+                    id: Date.now(),
+                    title: item.title,
+                    description: item.description,
+                    link: item.link,
+                    category: item.category,
+                    rating: rating
+                };
+                
+                memoryItems.push(newMemory);
+                localStorage.setItem('bucketlist_memories', JSON.stringify(memoryItems));
+                
+                futureItems = futureItems.filter(item => item.id !== id);
+                localStorage.setItem('bucketlist_future', JSON.stringify(futureItems));
+                
+                renderItems('future', futureFilter.value);
+                renderItems('memory', memoryFilter.value);
+                
+                showTab('memory');
+            }
+            
+            // מחיקת פריט
+            function deleteItem(type, id) {
+                if (!confirm(`האם למחוק את ה${type === 'future' ? 'יעד' : 'חוויה'}?`)) {
+                    return;
+                }
+                
+                if (type === 'future') {
+                    futureItems = futureItems.filter(item => item.id !== id);
+                    localStorage.setItem('bucketlist_future', JSON.stringify(futureItems));
+                    renderItems('future', futureFilter.value);
+                } else {
+                    memoryItems = memoryItems.filter(item => item.id !== id);
+                    localStorage.setItem('bucketlist_memories', JSON.stringify(memoryItems));
+                    renderItems('memory', memoryFilter.value);
+                }
+            }
+            
+            // הצגת פריט אקראי
+            function showRandomItem(type) {
+                const items = type === 'future' ? futureItems : memoryItems;
+                
+                if (items.length === 0) {
+                    alert(`אין עדיין ${type === 'future' ? 'יעדים' : 'חוויות'} ברשימה`);
+                    return;
+                }
+                
+                // בחירת פריט אקראי
+                const randomItem = items[Math.floor(Math.random() * items.length)];
+                
+                // קביעת אייקון לפי קטגוריה
+                let categoryIcon = '🏙️';
+                let categoryName = 'טיולים ומקומות';
+                
+                switch(randomItem.category) {
+                    case 'travel':
+                        categoryIcon = '🏙️';
+                        categoryName = 'טיולים ומקומות';
+                        break;
+                    case 'food':
+                        categoryIcon = '🍽️';
+                        categoryName = 'אוכל ומסעדות';
+                        break;
+                    case 'activities':
+                        categoryIcon = '🎯';
+                        categoryName = 'פעילויות ואטרקציות';
+                        break;
+                    case 'culture':
+                        categoryIcon = '🎭';
+                        categoryName = 'תרבות ואמנות';
+                        break;
+                    case 'learning':
+                        categoryIcon = '📚';
+                        categoryName = 'למידה ומיומנויות';
+                        break;
+                    case 'other':
+                        categoryIcon = '✨';
+                        categoryName = 'אחר';
+                        break;
+                }
+                
+                // יצירת כוכבים
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    stars += i <= randomItem.rating ? '★' : '☆';
+                }
+                
+                // כותרת ותוכן המודאל
+                document.getElementById('randomTitle').textContent = 
+                    type === 'future' ? 'יעד אקראי להשראה' : 'זיכרון אקראי משותף';
+                
+                const randomHTML = `
+                    <div class="bucket-item" style="width: 100%; margin: 0 auto;">
+                        <div class="item-category">${categoryIcon} ${categoryName}</div>
+                        <div class="item-content">
+                            <div class="item-title">${randomItem.title}</div>
+                            <div class="item-description" style="height: auto;">${randomItem.description}</div>
+                            ${randomItem.link ? `<a href="${randomItem.link}" class="item-link" target="_blank">קישור לאתר</a>` : ''}
+                            <div class="item-rating">
+                                <div class="stars">${stars}</div>
+                                <div>${type === 'future' ? 'חשיבות' : 'דירוג החוויה'}: ${randomItem.rating}/5</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('randomContent').innerHTML = randomHTML;
+                
+                // הצגת המודאל
+                randomModal.style.display = 'block';
+            }
+            
+            // מעבר בין טאבים
+            function showTab(type) {
+                if (type === 'future') {
+                    futureTab.classList.add('active');
+                    memoriesTab.classList.remove('active');
+                    futureContent.classList.add('active');
+                    memoriesContent.classList.remove('active');
+                } else {
+                    futureTab.classList.remove('active');
+                    memoriesTab.classList.add('active');
+                    futureContent.classList.remove('active');
+                    memoriesContent.classList.add('active');
+                }
+            }
+            
+            // ייצוא נתונים
+            function exportData() {
+                const data = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('loveNotes') || 
+                        key.startsWith('galleryImages') || 
+                        key.startsWith('catImages') || 
+                        key.startsWith('flappyScores') || 
+                        key.startsWith('puzzleScores') || 
+                        key.startsWith('gifts_') ||
+                        key === 'important_dates' || 
+                        key.startsWith('bucketlist_')) {
+                        data[key] = localStorage.getItem(key);
+                    }
+                }
+                
+                const dataStr = JSON.stringify(data);
+                const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = "love_app_data.json";
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            }
+            
+            // ייבוא נתונים
+            function importData() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = e => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(event) {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            
+                            Object.keys(data).forEach(key => {
+                                localStorage.setItem(key, data[key]);
+                            });
+                            
+                            alert('הנתונים יובאו בהצלחה! הדף יטען מחדש');
+                            location.reload();
+                        } catch (error) {
+                            alert('שגיאה ביבוא הנתונים. ודא שזהו קובץ תקין.');
+                            console.error('Import error:', error);
+                        }
+                    };
+                    
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            }
+        });
+    </script>
+</body>
+</html>

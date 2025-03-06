@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אפליקציית האהבה שלנו - משחק זיכרון</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffe6e6;
+            color: #333;
+            direction: rtl;
+        }
+        h1 {
+            color: #ff4d4d;
+            text-align: center;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #menu {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        #menu a {
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        #menu a:hover {
+            background-color: #ff3333;
+        }
+        button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #ff3333;
+        }
+        .game-controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .game-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .game-stats div {
+            background-color: #fff0f0;
+            padding: 10px 15px;
+            border-radius: 4px;
+        }
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .memory-card {
+            height: 0;
+            padding-bottom: 100%; /* Square aspect ratio */
+            position: relative;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .memory-card-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .memory-card.flipped .memory-card-inner {
+            transform: rotateY(180deg);
+        }
+        .memory-card-front, .memory-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .memory-card-front {
+            background-color: #ff4d4d;
+            color: white;
+            font-size: 28px;
+            transform: rotateY(180deg);
+        }
+        .memory-card-back {
+            background-color: #ffaaaa;
+            font-size: 36px;
+        }
+        .memory-card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .theme-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .theme-selector button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .theme-selector button.active {
+            background-color: #333;
+        }
+        .difficulty-selector {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 20px;
+        }
+        .difficulty-selector button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        .difficulty-selector button.active {
+            background-color: #333;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 80%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content h2 {
+            color: #ff4d4d;
+            margin-top: 0;
+        }
+        .high-scores-table {
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .high-scores-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .high-scores-table th, .high-scores-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .high-scores-table th {
+            background-color: #ff4d4d;
+            color: white;
+        }
+        .high-scores-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .high-scores-table tr:hover {
+            background-color: #f0f0f0;
+        }
+        .current-score {
+            background-color: #ffffcc !important;
+            font-weight: bold;
+        }
+        .export-import-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .celebration {
+            animation: celebrate 0.5s 3;
+        }
+    </style>
+</head>
+<body>
+    <h1>אפליקציית האהבה שלנו</h1>
+    
+    <div id="menu">
+        <a href="index.html">דף הבית</a>
+        <a href="gallery.html">גלריית תמונות</a>
+        <a href="notes.html">פתקי אהבה</a>
+        <a href="cats.html">חתולים טובים</a>
+        <a href="puzzle.html">משחק פאזל</a>
+        <a href="gifts.html">מתנות לקנייה</a>
+        <a href="countdown.html">ספירה לאחור</a>
+        <a href="bucketlist.html">רשימת יעדים</a>
+        <a href="memory.html">משחק זיכרון</a>
+        <a href="either-or.html">משחק או-או</a>
+    </div>
+
+    <div class="section">
+        <h2>משחק זיכרון</h2>
+        
+        <div class="theme-selector">
+            <button id="couple-theme" class="active">תמונות שלנו</button>
+            <button id="cats-theme">תמונות חתולים</button>
+        </div>
+        
+        <div class="difficulty-selector">
+            <button id="easy-mode" class="active">קל (8 זוגות)</button>
+            <button id="medium-mode">בינוני (10 זוגות)</button>
+            <button id="hard-mode">קשה (12 זוגות)</button>
+        </div>
+        
+        <div class="game-controls">
+            <button id="start-game">התחל משחק</button>
+            <button id="reset-game">משחק חדש</button>
+            <button id="show-high-scores">טבלת שיאים</button>
+        </div>
+        
+        <div class="game-stats">
+            <div>ניסיונות: <span id="attempts">0</span></div>
+            <div>זוגות: <span id="pairs">0</span>/<span id="total-pairs">8</span></div>
+            <div>זמן: <span id="timer">00:00</span></div>
+        </div>
+        
+        <div id="memory-game" class="memory-game">
+            <!-- Cards will be generated here -->
+        </div>
+    </div>
+    
+    <!-- Modal for win message -->
+    <div id="win-modal" class="modal">
+        <div class="modal-content">
+            <h2>כל הכבוד!</h2>
+            <p>סיימת את המשחק ב-<span id="final-time"></span> עם <span id="final-attempts"></span> ניסיונות.</p>
+            
+            <h3>טבלת השיאים</h3>
+            <div class="high-scores-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>מקום</th>
+                            <th>זמן</th>
+                            <th>ניסיונות</th>
+                            <th>רמה</th>
+                            <th>נושא</th>
+                        </tr>
+                    </thead>
+                    <tbody id="high-scores-list">
+                        <!-- High scores will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <button id="close-modal">סגור</button>
+        </div>
+    </div>
+    
+    <div class="export-import-container">
+        <button id="export-btn">ייצא נתונים</button>
+        <button id="import-btn">ייבא נתונים</button>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const memoryGame = document.getElementById('memory-game');
+            const startGameBtn = document.getElementById('start-game');
+            const resetGameBtn = document.getElementById('reset-game');
+            const coupleThemeBtn = document.getElementById('couple-theme');
+            const catsThemeBtn = document.getElementById('cats-theme');
+            const easyModeBtn = document.getElementById('easy-mode');
+            const mediumModeBtn = document.getElementById('medium-mode');
+            const hardModeBtn = document.getElementById('hard-mode');
+            const attemptsEl = document.getElementById('attempts');
+            const pairsEl = document.getElementById('pairs');
+            const totalPairsEl = document.getElementById('total-pairs');
+            const timerEl = document.getElementById('timer');
+            const winModal = document.getElementById('win-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const finalTimeEl = document.getElementById('final-time');
+            const finalAttemptsEl = document.getElementById('final-attempts');
+            const exportBtn = document.getElementById('export-btn');
+            const importBtn = document.getElementById('import-btn');
+            
+            // Game variables
+            let cards = [];
+            let hasFlippedCard = false;
+            let lockBoard = false;
+            let firstCard, secondCard;
+            let attempts = 0;
+            let matchedPairs = 0;
+            let totalPairs = 8;
+            let timer;
+            let seconds = 0;
+            let gameStarted = false;
+            let theme = 'couple'; // Default theme
+            
+            // Cat pictures for the cats theme
+            const catImages = [
+                'images/cat1.jpg',
+                'images/cat2.jpg',
+                'images/mash.jpg',
+                'images/cat4.jpg',
+                'images/cat5.jpg',
+                'images/cat6.jpg',
+                'images/cat7.jpg',
+                'images/cat8.jpg',
+                'images/cat9.jpg',
+                'images/cat10.jpg',
+                'images/cat11.jpg',
+                'images/cat12.jpg'
+            ];
+            
+            // Couple pictures for the couple theme
+            const coupleImages = [
+                'images/us.jpeg',
+                'images/ilos.jpeg',
+                'images/laugh.jpg',
+                'images/pt.jpeg',
+                'images/movie.jpg',
+                'images/gre.jpeg',
+                'images/eat.jpeg',
+                'images/yeah.jpeg',
+                'images/out.jpeg',
+                'images/esc2.jpeg',
+                'images/yes.jpeg',
+                'images/ode.jpg'
+            ];
+            
+            // Event listeners
+            startGameBtn.addEventListener('click', startGame);
+            resetGameBtn.addEventListener('click', resetGame);
+            coupleThemeBtn.addEventListener('click', () => setTheme('couple'));
+            catsThemeBtn.addEventListener('click', () => setTheme('cats'));
+            easyModeBtn.addEventListener('click', () => setDifficulty('easy'));
+            mediumModeBtn.addEventListener('click', () => setDifficulty('medium'));
+            hardModeBtn.addEventListener('click', () => setDifficulty('hard'));
+            const showHighScoresBtn = document.getElementById('show-high-scores');
+            closeModalBtn.addEventListener('click', () => winModal.style.display = 'none');
+            showHighScoresBtn.addEventListener('click', showHighScores);
+            exportBtn.addEventListener('click', exportData);
+            importBtn.addEventListener('click', importData);
+            
+            // Initialize game
+            function startGame() {
+                resetGame();
+                lockBoard = false;
+                
+                // Get images based on selected theme
+                const images = theme === 'couple' ? coupleImages : catImages;
+                
+                // Select images based on difficulty
+                const selectedImages = images.slice(0, totalPairs);
+                
+                // Create pairs
+                let cardData = [];
+                selectedImages.forEach((img, index) => {
+                    cardData.push({ img, id: index });
+                    cardData.push({ img, id: index });
+                });
+                
+                // Shuffle cards
+                cardData = shuffleArray(cardData);
+                
+                // Generate HTML
+                updateGridColumns();
+                cardData.forEach((card, index) => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'memory-card';
+                    cardElement.dataset.id = card.id;
+                    
+                    cardElement.innerHTML = `
+                        <div class="memory-card-inner">
+                            <div class="memory-card-front">
+                                <img src="${card.img}" alt="Card Image">
+                            </div>
+                            <div class="memory-card-back">
+                                ❤️
+                            </div>
+                        </div>
+                    `;
+                    
+                    cardElement.addEventListener('click', flipCard);
+                    memoryGame.appendChild(cardElement);
+                });
+                
+                // Start timer
+                seconds = 0;
+                timerEl.textContent = '00:00';
+                timer = setInterval(updateTimer, 1000);
+                gameStarted = true;
+            }
+            
+            // Reset game
+            function resetGame() {
+                memoryGame.innerHTML = '';
+                clearInterval(timer);
+                hasFlippedCard = false;
+                lockBoard = false;
+                firstCard = null;
+                secondCard = null;
+                attempts = 0;
+                matchedPairs = 0;
+                seconds = 0;
+                gameStarted = false;
+                attemptsEl.textContent = attempts;
+                pairsEl.textContent = matchedPairs;
+                timerEl.textContent = '00:00';
+            }
+            
+            // Set theme
+            function setTheme(newTheme) {
+                theme = newTheme;
+                if (newTheme === 'couple') {
+                    coupleThemeBtn.classList.add('active');
+                    catsThemeBtn.classList.remove('active');
+                } else {
+                    coupleThemeBtn.classList.remove('active');
+                    catsThemeBtn.classList.add('active');
+                }
+                
+                if (gameStarted) {
+                    resetGame();
+                }
+            }
+            
+            // Set difficulty
+            function setDifficulty(difficulty) {
+                easyModeBtn.classList.remove('active');
+                mediumModeBtn.classList.remove('active');
+                hardModeBtn.classList.remove('active');
+                
+                switch (difficulty) {
+                    case 'easy':
+                        totalPairs = 8;
+                        easyModeBtn.classList.add('active');
+                        break;
+                    case 'medium':
+                        totalPairs = 10;
+                        mediumModeBtn.classList.add('active');
+                        break;
+                    case 'hard':
+                        totalPairs = 12;
+                        hardModeBtn.classList.add('active');
+                        break;
+                }
+                
+                totalPairsEl.textContent = totalPairs;
+                
+                if (gameStarted) {
+                    resetGame();
+                }
+                
+                updateGridColumns();
+            }
+            
+            // Update grid columns based on difficulty
+            function updateGridColumns() {
+                if (totalPairs <= 8) {
+                    memoryGame.style.gridTemplateColumns = 'repeat(4, 1fr)';
+                } else if (totalPairs === 10) {
+                    memoryGame.style.gridTemplateColumns = 'repeat(5, 1fr)';
+                } else {
+                    memoryGame.style.gridTemplateColumns = 'repeat(6, 1fr)';
+                }
+            }
+            
+            // Flip card
+            function flipCard() {
+                if (lockBoard) return;
+                if (this === firstCard) return;
+                
+                this.classList.add('flipped');
+                
+                if (!hasFlippedCard) {
+                    // First card flipped
+                    hasFlippedCard = true;
+                    firstCard = this;
+                    return;
+                }
+                
+                // Second card flipped
+                secondCard = this;
+                attempts++;
+                attemptsEl.textContent = attempts;
+                
+                checkForMatch();
+            }
+            
+            // Check for match
+            function checkForMatch() {
+                let isMatch = firstCard.dataset.id === secondCard.dataset.id;
+                
+                if (isMatch) {
+                    disableCards();
+                    matchedPairs++;
+                    pairsEl.textContent = matchedPairs;
+                    
+                    if (matchedPairs === totalPairs) {
+                        setTimeout(() => {
+                            winGame();
+                        }, 500);
+                    }
+                } else {
+                    unflipCards();
+                }
+            }
+            
+            // Disable cards
+            function disableCards() {
+                firstCard.removeEventListener('click', flipCard);
+                secondCard.removeEventListener('click', flipCard);
+                
+                resetBoard();
+            }
+            
+            // Unflip cards
+            function unflipCards() {
+                lockBoard = true;
+                
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    
+                    resetBoard();
+                }, 1000);
+            }
+            
+            // Reset board
+            function resetBoard() {
+                [hasFlippedCard, lockBoard] = [false, false];
+                [firstCard, secondCard] = [null, null];
+            }
+            
+            // Win game
+            function winGame() {
+                clearInterval(timer);
+                finalTimeEl.textContent = timerEl.textContent;
+                finalAttemptsEl.textContent = attempts;
+                
+                // Save high score
+                const currentScore = {
+                    time: seconds,
+                    attempts: attempts,
+                    pairs: totalPairs,
+                    theme: theme,
+                    date: new Date().toISOString(),
+                    id: Date.now() // Unique ID for identifying the current score
+                };
+                
+                // Get high scores
+                let highScores = JSON.parse(localStorage.getItem('memory_game_scores') || '[]');
+                highScores.push(currentScore);
+                
+                // Sort by difficulty level (pairs), then by time, then by attempts
+                highScores.sort((a, b) => {
+                    if (a.pairs === b.pairs) {
+                        if (a.time === b.time) {
+                            return a.attempts - b.attempts;
+                        }
+                        return a.time - b.time;
+                    }
+                    return b.pairs - a.pairs;
+                });
+                
+                // Keep only top 15
+                highScores = highScores.slice(0, 15);
+                
+                // Save to localStorage
+                localStorage.setItem('memory_game_scores', JSON.stringify(highScores));
+                
+                // Generate high scores HTML for the modal
+                let highScoresHTML = generateHighScoresHTML();
+                document.getElementById('high-scores-list').innerHTML = highScoresHTML;
+                
+                // Show win modal
+                winModal.style.display = 'flex';
+                
+                // Add celebration animation to the board
+                memoryGame.classList.add('celebration');
+                setTimeout(() => {
+                    memoryGame.classList.remove('celebration');
+                }, 1500);
+            }
+            
+            // Update timer
+            function updateTimer() {
+                seconds++;
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+            
+            // Shuffle array
+            function shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+            
+            // Export data
+            function exportData() {
+                const data = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('loveNotes') || 
+                        key.startsWith('galleryImages') || 
+                        key.startsWith('catImages') || 
+                        key.startsWith('flappyScores') || 
+                        key.startsWith('puzzleScores') || 
+                        key.startsWith('gifts_') ||
+                        key === 'important_dates' || 
+                        key.startsWith('bucketlist_') ||
+                        key === 'memory_game_scores') {
+                        data[key] = localStorage.getItem(key);
+                    }
+                }
+                
+                const dataStr = JSON.stringify(data);
+                const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = "love_app_data.json";
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            }
+            
+            // Import data
+            function importData() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = e => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(event) {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            
+                            Object.keys(data).forEach(key => {
+                                localStorage.setItem(key, data[key]);
+                            });
+                            
+                            alert('הנתונים יובאו בהצלחה! הדף יטען מחדש');
+                            location.reload();
+                        } catch (error) {
+                            alert('שגיאה ביבוא הנתונים. ודא שזהו קובץ תקין.');
+                            console.error('Import error:', error);
+                        }
+                    };
+                    
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            }
+            
+            // Generate high scores HTML
+            function generateHighScoresHTML(currentScoreId = null) {
+                const highScores = JSON.parse(localStorage.getItem('memory_game_scores') || '[]');
+                
+                if (highScores.length === 0) {
+                    return '<tr><td colspan="5">אין עדיין שיאים. שחק משחק ראשון!</td></tr>';
+                }
+                
+                let html = '';
+                highScores.forEach((score, index) => {
+                    // Format time
+                    const mins = Math.floor(score.time / 60);
+                    const secs = score.time % 60;
+                    const formattedTime = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                    
+                    // Determine difficulty label
+                    let difficultyLabel;
+                    switch(score.pairs) {
+                        case 8: difficultyLabel = 'קל'; break;
+                        case 10: difficultyLabel = 'בינוני'; break;
+                        case 12: difficultyLabel = 'קשה'; break;
+                        default: difficultyLabel = score.pairs + ' זוגות';
+                    }
+                    
+                    // Determine theme label
+                    const themeLabel = score.theme === 'couple' ? 'תמונות שלנו' : 'חתולים';
+                    
+                    // Check if this is the current score
+                    const isCurrentScore = currentScoreId && score.id === currentScoreId;
+                    const rowClass = isCurrentScore ? 'current-score' : '';
+                    
+                    html += `
+                        <tr class="${rowClass}">
+                            <td>${index + 1}</td>
+                            <td>${formattedTime}</td>
+                            <td>${score.attempts}</td>
+                            <td>${difficultyLabel}</td>
+                            <td>${themeLabel}</td>
+                        </tr>
+                    `;
+                });
+                
+                return html;
+            }
+            
+            // Show high scores
+            function showHighScores() {
+                let highScoresHTML = generateHighScoresHTML();
+                document.getElementById('high-scores-list').innerHTML = highScoresHTML;
+                winModal.style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+</html>

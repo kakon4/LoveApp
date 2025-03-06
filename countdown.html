@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אפליקציית האהבה שלנו - ספירה לאחור</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffe6e6;
+            color: #333;
+            direction: rtl;
+        }
+        h1 {
+            color: #ff4d4d;
+            text-align: center;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #menu {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        #menu a {
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        #menu a:hover {
+            background-color: #ff3333;
+        }
+        button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff3333;
+        }
+        .export-import-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .export-import-container button {
+            margin: 0 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        #date-form {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border-top: 1px solid #ffcccc;
+            padding-top: 20px;
+        }
+        .countdown-display {
+            text-align: center;
+            margin: 10px 0 30px 0;
+        }
+        .countdown-title {
+            font-size: 24px;
+            color: #ff4d4d;
+            margin-bottom: 15px;
+        }
+        .countdown-timer {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .countdown-units {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .countdown-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .countdown-value {
+            font-size: 36px;
+            font-weight: bold;
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            min-width: 65px;
+            text-align: center;
+        }
+        .countdown-label {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #666;
+        }
+        .date-list {
+            margin-top: 30px;
+        }
+        .date-item {
+            background-color: #fff0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .date-title {
+            font-weight: bold;
+        }
+        .date-title span {
+            margin-right: 5px;
+            font-weight: normal;
+            color: #666;
+        }
+        .date-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .date-actions button {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        .selected-date {
+            background-color: #ffdddd;
+            border-right: 4px solid #ff4d4d;
+        }
+        .date-time-remaining {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .next-event {
+            background-color: #fff0f0;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>אפליקציית האהבה שלנו</h1>
+    
+    <div id="menu">
+        <a href="index.html">דף הבית</a>
+        <a href="gallery.html">גלריית תמונות</a>
+        <a href="notes.html">פתקי אהבה</a>
+        <a href="cats.html">חתולים טובים</a>
+        <a href="puzzle.html">משחק פאזל</a>
+        <a href="gifts.html">מתנות לקנייה</a>
+        <a href="countdown.html">ספירה לאחור</a>
+        <a href="bucketlist.html">רשימת יעדים</a>
+        <a href="memory.html">משחק זיכרון</a>
+        <a href="either-or.html">משחק או-או</a>
+    </div>
+
+    <div class="section">
+        <h2>ספירה לאחור לתאריכים חשובים</h2>
+        
+        <!-- תיבת הצגת האירוע הקרוב -->
+        <div id="next-event-container" class="next-event">
+            האירוע הקרוב: <span id="next-event-name">טוען...</span>
+        </div>
+        
+        <!-- הספירה לאחור עכשיו מופיעה ראשונה -->
+        <div class="countdown-display">
+            <div class="countdown-title" id="countdown-title">טוען...</div>
+            <div class="countdown-units">
+                <div class="countdown-unit">
+                    <div class="countdown-value" id="days">00</div>
+                    <div class="countdown-label">ימים</div>
+                </div>
+                <div class="countdown-unit">
+                    <div class="countdown-value" id="hours">00</div>
+                    <div class="countdown-label">שעות</div>
+                </div>
+                <div class="countdown-unit">
+                    <div class="countdown-value" id="minutes">00</div>
+                    <div class="countdown-label">דקות</div>
+                </div>
+                <div class="countdown-unit">
+                    <div class="countdown-value" id="seconds">00</div>
+                    <div class="countdown-label">שניות</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- טופס הוספת תאריך עבר למטה -->
+        <div id="date-form">
+            <h3>הוסיפו תאריך חדש</h3>
+            <div class="form-group">
+                <label for="event-title">שם האירוע:</label>
+                <input type="text" id="event-title" placeholder="לדוגמה: יום הולדת">
+            </div>
+            <div class="form-group">
+                <label for="event-date">תאריך:</label>
+                <input type="datetime-local" id="event-date">
+            </div>
+            <div class="form-group">
+                <label for="event-repeat">חזרה שנתית:</label>
+                <select id="event-repeat">
+                    <option value="no">חד פעמי</option>
+                    <option value="yes">חוזר מדי שנה</option>
+                </select>
+            </div>
+            <button id="add-date-btn">הוסף תאריך</button>
+        </div>
+        
+        <div class="date-list">
+            <h3>התאריכים החשובים שלנו</h3>
+            <div id="dates-container"></div>
+        </div>
+    </div>
+    
+    <div class="export-import-container">
+        <button id="export-btn">ייצא נתונים</button>
+        <button id="import-btn">ייבא נתונים</button>
+    </div>
+    
+    <script>
+        let currentDateId = null;
+        let countdownInterval = null;
+        
+        // טעינת התאריכים בטעינת הדף
+        document.addEventListener('DOMContentLoaded', function() {
+            // הגדרת ערך ברירת מחדל לתאריך (היום + שעה)
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            now.setMinutes(0);
+            document.getElementById('event-date').value = now.toISOString().slice(0, 16);
+            
+            // טעינת התאריכים השמורים
+            loadDates();
+            
+            // הפעלת הספירה לאחור
+            startCountdown();
+            
+            // הוספת מאזינים לאירועים
+            document.getElementById('add-date-btn').addEventListener('click', addDate);
+            document.getElementById('export-btn').addEventListener('click', exportData);
+            document.getElementById('import-btn').addEventListener('click', importData);
+        });
+        
+        // פונקציה להוספת תאריך חדש
+        function addDate() {
+            const title = document.getElementById('event-title').value.trim();
+            const dateStr = document.getElementById('event-date').value;
+            const repeatYearly = document.getElementById('event-repeat').value === 'yes';
+            
+            if (!title) {
+                alert('נא להזין שם לאירוע');
+                return;
+            }
+            
+            if (!dateStr) {
+                alert('נא לבחור תאריך');
+                return;
+            }
+            
+            const date = new Date(dateStr);
+            
+            const newDate = {
+                id: Date.now(),
+                title: title,
+                date: date.toISOString(),
+                repeat: repeatYearly
+            };
+            
+            // שמירת התאריך
+            const dates = getDates();
+            dates.push(newDate);
+            saveDates(dates);
+            
+            // איפוס הטופס
+            document.getElementById('event-title').value = '';
+            
+            // עדכון התצוגה
+            loadDates();
+            startCountdown();
+        }
+        
+        // פונקציה לטעינת התאריכים
+        function loadDates() {
+            const dates = getDates();
+            const container = document.getElementById('dates-container');
+            
+            // ניקוי הרשימה
+            container.innerHTML = '';
+            
+            if (dates.length === 0) {
+                container.innerHTML = '<p>עדיין אין תאריכים. הוסיפו את התאריך הראשון!</p>';
+                return;
+            }
+            
+            // מיון התאריכים לפי תאריך קרוב
+            const sortedDates = sortDatesByNextOccurrence(dates);
+            
+            // מציאת התאריך הקרוב ביותר
+            const nextEvent = sortedDates[0];
+            document.getElementById('next-event-name').textContent = nextEvent.title;
+            
+            // אם אין תאריך נבחר, בחר את התאריך הקרוב ביותר
+            if (currentDateId === null) {
+                currentDateId = nextEvent.id;
+            }
+            
+            // הוספת התאריכים לרשימה
+            sortedDates.forEach(dateObj => {
+                const isSelected = dateObj.id === currentDateId;
+                
+                const dateItem = document.createElement('div');
+                dateItem.className = `date-item ${isSelected ? 'selected-date' : ''}`;
+                
+                const nextDate = getNextOccurrence(new Date(dateObj.date), dateObj.repeat);
+                const timeRemaining = getTimeRemaining(nextDate);
+                
+                let dateHTML = `
+                    <div class="date-info">
+                        <div class="date-title">${dateObj.title} <span>${formatDate(nextDate)}</span></div>
+                        <div class="date-time-remaining">נותרו: ${timeRemaining.days} ימים, ${timeRemaining.hours} שעות, ${timeRemaining.minutes} דקות</div>
+                    </div>
+                    <div class="date-actions">
+                        <button class="select-btn" data-id="${dateObj.id}">הצג ספירה לאחור</button>
+                        <button class="delete-btn" data-id="${dateObj.id}">מחק</button>
+                    </div>
+                `;
+                
+                dateItem.innerHTML = dateHTML;
+                container.appendChild(dateItem);
+                
+                // הוספת מאזינים לכפתורים
+                dateItem.querySelector('.select-btn').addEventListener('click', function() {
+                    currentDateId = dateObj.id;
+                    loadDates(); // לעדכון הסימון בתצוגה
+                    startCountdown();
+                });
+                
+                dateItem.querySelector('.delete-btn').addEventListener('click', function() {
+                    deleteDate(dateObj.id);
+                });
+            });
+        }
+        
+        // פונקציה למחיקת תאריך
+        function deleteDate(id) {
+            if (confirm('האם אתה בטוח שברצונך למחוק תאריך זה?')) {
+                let dates = getDates();
+                dates = dates.filter(date => date.id !== id);
+                saveDates(dates);
+                
+                // אם נמחק התאריך הנוכחי, בחר את התאריך הקרוב ביותר
+                if (id === currentDateId) {
+                    currentDateId = null;
+                }
+                
+                loadDates();
+                startCountdown();
+            }
+        }
+        
+        // פונקציה להפעלת הספירה לאחור
+        function startCountdown() {
+            // עצירת הספירה הקודמת אם יש
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            const dates = getDates();
+            if (dates.length === 0) {
+                document.getElementById('countdown-title').textContent = 'אין תאריכים להציג';
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
+            }
+            
+            // בחירת התאריך לספירה
+            let selectedDate = null;
+            
+            if (currentDateId) {
+                selectedDate = dates.find(date => date.id === currentDateId);
+            }
+            
+            // אם אין תאריך נבחר, קח את התאריך הקרוב ביותר
+            if (!selectedDate) {
+                const sortedDates = sortDatesByNextOccurrence(dates);
+                selectedDate = sortedDates[0];
+                currentDateId = selectedDate.id;
+            }
+            
+            const nextOccurrence = getNextOccurrence(new Date(selectedDate.date), selectedDate.repeat);
+            
+            // הצגת שם האירוע
+            document.getElementById('countdown-title').textContent = selectedDate.title;
+            
+            // פונקציה לעדכון הספירה
+            function updateCountdown() {
+                const timeRemaining = getTimeRemaining(nextOccurrence);
+                
+                document.getElementById('days').textContent = String(timeRemaining.days).padStart(2, '0');
+                document.getElementById('hours').textContent = String(timeRemaining.hours).padStart(2, '0');
+                document.getElementById('minutes').textContent = String(timeRemaining.minutes).padStart(2, '0');
+                document.getElementById('seconds').textContent = String(timeRemaining.seconds).padStart(2, '0');
+                
+                // אם הספירה הסתיימה
+                if (timeRemaining.total <= 0) {
+                    clearInterval(countdownInterval);
+                    
+                    // אם התאריך חוזר מדי שנה, חשב את התאריך הבא
+                    if (selectedDate.repeat) {
+                        const newNextOccurrence = getNextOccurrence(new Date(selectedDate.date), selectedDate.repeat);
+                        loadDates();
+                        startCountdown();
+                    }
+                }
+            }
+            
+            // הפעלת הספירה והפעלה ראשונית
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+        
+        // פונקציה למציאת התאריך הבא של אירוע חוזר
+        function getNextOccurrence(date, repeat) {
+            const now = new Date();
+            
+            // אם זה אירוע חד פעמי
+            if (!repeat) {
+                return date;
+            }
+            
+            // אם זה אירוע שנתי, מצא את התאריך הבא
+            const nextDate = new Date(date);
+            
+            // התאם את השנה לשנה הנוכחית
+            nextDate.setFullYear(now.getFullYear());
+            
+            // אם התאריך כבר עבר השנה, קבע לשנה הבאה
+            if (nextDate < now) {
+                nextDate.setFullYear(now.getFullYear() + 1);
+            }
+            
+            return nextDate;
+        }
+        
+        // פונקציה למיון תאריכים לפי המועד הקרוב הבא
+        function sortDatesByNextOccurrence(dates) {
+            const now = new Date();
+            
+            return [...dates].sort((a, b) => {
+                const dateA = getNextOccurrence(new Date(a.date), a.repeat);
+                const dateB = getNextOccurrence(new Date(b.date), b.repeat);
+                return dateA - dateB;
+            });
+        }
+        
+        // פונקציה לחישוב הזמן שנותר
+        function getTimeRemaining(endDate) {
+            const total = endDate - new Date();
+            const seconds = Math.floor((total / 1000) % 60);
+            const minutes = Math.floor((total / 1000 / 60) % 60);
+            const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+            const days = Math.floor(total / (1000 * 60 * 60 * 24));
+            
+            return {
+                total,
+                days,
+                hours,
+                minutes,
+                seconds
+            };
+        }
+        
+        // פונקציה לעיצוב התאריך בפורמט קריא
+        function formatDate(date) {
+            return new Intl.DateTimeFormat('he-IL', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(date);
+        }
+        
+        // פונקציות עזר לשמירה וטעינה מהאחסון המקומי
+        function getDates() {
+            return JSON.parse(localStorage.getItem('important_dates') || '[]');
+        }
+        
+        function saveDates(dates) {
+            localStorage.setItem('important_dates', JSON.stringify(dates));
+        }
+        
+        // פונקציות לייצוא ויבוא נתונים
+        function exportData() {
+            // איסוף כל הנתונים מ-localStorage
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                // נסנן רק את המפתחות הרלוונטיים לאפליקציה שלנו
+                if (key.startsWith('loveNotes') || key.startsWith('galleryImages') || 
+                    key.startsWith('catImages') || key.startsWith('flappyScores') || 
+                    key.startsWith('puzzleScores') || key.startsWith('gifts_') ||
+                    key === 'important_dates') {
+                    data[key] = localStorage.getItem(key);
+                }
+            }
+            
+            // המרה לטקסט והורדה כקובץ
+            const dataStr = JSON.stringify(data);
+            const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = "love_app_data.json";
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        // הכנסת הנתונים ל-localStorage
+                        Object.keys(data).forEach(key => {
+                            localStorage.setItem(key, data[key]);
+                        });
+                        
+                        alert('הנתונים יובאו בהצלחה! הדף יטען מחדש כדי לשקף את השינויים.');
+                        location.reload(); // טעינה מחדש של הדף להצגת הנתונים החדשים
+                    } catch (error) {
+                        alert('שגיאה ביבוא הנתונים. ודא שזהו קובץ תקין.');
+                        console.error('Import error:', error);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אפליקציית האהבה שלנו - מתנות לקנייה</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffe6e6;
+            color: #333;
+            direction: rtl;
+        }
+        h1 {
+            color: #ff4d4d;
+            text-align: center;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #menu {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        #menu a {
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        #menu a:hover {
+            background-color: #ff3333;
+        }
+        .gift-form {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], 
+        input[type="url"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff3333;
+        }
+        .gifts-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .gift-item {
+            background-color: #fff0f0;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .gift-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .gift-description {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .gift-link {
+            display: inline-block;
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        .gift-link:hover {
+            background-color: #ff3333;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            line-height: 25px;
+            text-align: center;
+            padding: 0;
+        }
+        .export-import-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .export-import-container button {
+            margin: 0 10px;
+        }
+        .joke-title {
+            font-style: italic;
+            color: #ff4d4d;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .wishlist-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ff4d4d;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+        }
+        .tab-button.active {
+            background-color: #ff4d4d;
+            color: white;
+        }
+        .wishlist-content {
+            display: none;
+        }
+        .wishlist-content.active {
+            display: block;
+        }
+        .person-title {
+            color: #ff4d4d;
+            border-bottom: 1px solid #ffb3b3;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>אפליקציית האהבה שלנו</h1>
+    
+    <div id="menu">
+        <a href="index.html">דף הבית</a>
+        <a href="gallery.html">גלריית תמונות</a>
+        <a href="notes.html">פתקי אהבה</a>
+        <a href="cats.html">חתולים טובים</a>
+        <a href="puzzle.html">משחק פאזל</a>
+        <a href="gifts.html">מתנות לקנייה</a>
+        <a href="countdown.html">ספירה לאחור</a>
+        <a href="bucketlist.html">רשימת יעדים</a>
+        <a href="memory.html">משחק זיכרון</a>
+        <a href="either-or.html">משחק או-או</a>
+    </div>
+
+    <div class="section">
+        <h2>מתנות לקנייה</h2>
+        <p class="joke-title">לא אמרתי כלום 😉</p>
+        
+        <!-- כפתורי טאבים - שני ראשונה -->
+        <div class="wishlist-tabs">
+            <button class="tab-button active" onclick="openWishlist('shani')">רשימת מתנות לשני</button>
+            <button class="tab-button" onclick="openWishlist('arik')">רשימת מתנות לאריק</button>
+        </div>
+        
+        <!-- רשימת מתנות לשני - עכשיו ראשונה ופעילה -->
+        <div id="shani-wishlist" class="wishlist-content active">
+            <h3 class="person-title">מתנות ששני רוצה</h3>
+            
+            <div class="gift-form">
+                <h3>הוסיפי מתנה חדשה</h3>
+                <div class="form-group">
+                    <label for="shani-gift-title">שם המתנה:</label>
+                    <input type="text" id="shani-gift-title" placeholder="למשל: שעון חכם">
+                </div>
+                <div class="form-group">
+                    <label for="shani-gift-description">תיאור:</label>
+                    <textarea id="shani-gift-description" placeholder="פרטים נוספים..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="shani-gift-link">קישור לחנות:</label>
+                    <input type="url" id="shani-gift-link" placeholder="https://...">
+                </div>
+                <button id="add-shani-gift-btn">הוסף מתנה לרשימה של שני</button>
+            </div>
+            
+            <h3>רשימת המתנות של שני</h3>
+            <ul id="shani-gifts-list" class="gifts-list"></ul>
+        </div>
+        
+        <!-- רשימת מתנות לאריק - עכשיו שנייה -->
+        <div id="arik-wishlist" class="wishlist-content">
+            <h3 class="person-title">מתנות שאריק רוצה</h3>
+            
+            <div class="gift-form">
+                <h3>הוסיפי מתנה חדשה</h3>
+                <div class="form-group">
+                    <label for="arik-gift-title">שם המתנה:</label>
+                    <input type="text" id="arik-gift-title" placeholder="למשל: שעון חכם">
+                </div>
+                <div class="form-group">
+                    <label for="arik-gift-description">תיאור:</label>
+                    <textarea id="arik-gift-description" placeholder="פרטים נוספים..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="arik-gift-link">קישור לחנות:</label>
+                    <input type="url" id="arik-gift-link" placeholder="https://...">
+                </div>
+                <button id="add-arik-gift-btn">הוסף מתנה לרשימה של אריק</button>
+            </div>
+            
+            <h3>רשימת המתנות של אריק</h3>
+            <ul id="arik-gifts-list" class="gifts-list"></ul>
+        </div>
+    </div>
+    
+    <div class="export-import-container">
+        <button id="export-btn">ייצא נתונים</button>
+        <button id="import-btn">ייבא נתונים</button>
+    </div>
+    
+    <script>
+        // טעינת רשימות המתנות בטעינת הדף
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGifts('shani');
+            loadGifts('arik');
+            
+            // הוספת מאזינים לאירועים
+            document.getElementById('add-shani-gift-btn').addEventListener('click', function() {
+                addGift('shani');
+            });
+            document.getElementById('add-arik-gift-btn').addEventListener('click', function() {
+                addGift('arik');
+            });
+            document.getElementById('export-btn').addEventListener('click', exportData);
+            document.getElementById('import-btn').addEventListener('click', importData);
+        });
+        
+        // פונקציה למעבר בין רשימות המתנות
+        function openWishlist(person) {
+            // הסתרת כל התוכן
+            document.querySelectorAll('.wishlist-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // הסרת הדגשה מכל הכפתורים
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // הצגת התוכן הרלוונטי
+            document.getElementById(`${person}-wishlist`).classList.add('active');
+            
+            // הדגשת הכפתור הנלחץ
+            document.querySelector(`.tab-button[onclick="openWishlist('${person}')"]`).classList.add('active');
+        }
+        
+        // פונקציה להוספת מתנה חדשה
+        function addGift(person) {
+            const title = document.getElementById(`${person}-gift-title`).value.trim();
+            const description = document.getElementById(`${person}-gift-description`).value.trim();
+            const link = document.getElementById(`${person}-gift-link`).value.trim();
+            
+            if (!title) {
+                alert('נא להזין שם למתנה');
+                return;
+            }
+            
+            const gift = {
+                id: Date.now(),
+                title: title,
+                description: description,
+                link: link
+            };
+            
+            // שמירת המתנה
+            const gifts = getGifts(person);
+            gifts.push(gift);
+            saveGifts(person, gifts);
+            
+            // איפוס הטופס
+            document.getElementById(`${person}-gift-title`).value = '';
+            document.getElementById(`${person}-gift-description`).value = '';
+            document.getElementById(`${person}-gift-link`).value = '';
+            
+            // רענון הרשימה
+            loadGifts(person);
+        }
+        
+        // פונקציה לטעינת רשימת המתנות
+        function loadGifts(person) {
+            const gifts = getGifts(person);
+            const giftsList = document.getElementById(`${person}-gifts-list`);
+            
+            // ניקוי הרשימה
+            giftsList.innerHTML = '';
+            
+            // הוספת המתנות לרשימה
+            gifts.forEach(gift => {
+                const li = document.createElement('li');
+                li.className = 'gift-item';
+                
+                // יצירת תוכן המתנה
+                let giftHTML = `
+                    <div class="gift-title">${gift.title}</div>
+                `;
+                
+                if (gift.description) {
+                    giftHTML += `<div class="gift-description">${gift.description}</div>`;
+                }
+                
+                if (gift.link) {
+                    giftHTML += `<a href="${gift.link}" class="gift-link" target="_blank">קישור לחנות</a>`;
+                }
+                
+                // כפתור מחיקה
+                giftHTML += `<button class="delete-btn" data-id="${gift.id}">×</button>`;
+                
+                li.innerHTML = giftHTML;
+                giftsList.appendChild(li);
+                
+                // הוספת מאזין למחיקה
+                li.querySelector('.delete-btn').addEventListener('click', function() {
+                    deleteGift(person, gift.id);
+                });
+            });
+            
+            // הצגת הודעה אם אין מתנות
+            if (gifts.length === 0) {
+                giftsList.innerHTML = '<p>עדיין אין מתנות ברשימה. הוסיפו את המתנה הראשונה!</p>';
+            }
+        }
+        
+        // פונקציה למחיקת מתנה
+        function deleteGift(person, id) {
+            if (confirm('האם את/ה בטוח/ה שאת/ה רוצה למחוק את המתנה הזו?')) {
+                let gifts = getGifts(person);
+                gifts = gifts.filter(gift => gift.id !== id);
+                saveGifts(person, gifts);
+                loadGifts(person);
+            }
+        }
+        
+        // פונקציות עזר לשמירה וטעינה מהאחסון המקומי
+        function getGifts(person) {
+            return JSON.parse(localStorage.getItem(`gifts_${person}`) || '[]');
+        }
+        
+        function saveGifts(person, gifts) {
+            localStorage.setItem(`gifts_${person}`, JSON.stringify(gifts));
+        }
+        
+        // פונקציות לייצוא ויבוא נתונים
+        function exportData() {
+            // איסוף כל הנתונים מ-localStorage
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                // נסנן רק את המפתחות הרלוונטיים לאפליקציה שלנו
+                if (key.startsWith('loveNotes') || key.startsWith('galleryImages') || 
+                    key.startsWith('catImages') || key.startsWith('flappyScores') || 
+                    key.startsWith('puzzleScores') || key.startsWith('gifts_')) {
+                    data[key] = localStorage.getItem(key);
+                }
+            }
+            
+            // המרה לטקסט והורדה כקובץ
+            const dataStr = JSON.stringify(data);
+            const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = "love_app_data.json";
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        // הכנסת הנתונים ל-localStorage
+                        Object.keys(data).forEach(key => {
+                            localStorage.setItem(key, data[key]);
+                        });
+                        
+                        alert('הנתונים יובאו בהצלחה! הדף יטען מחדש כדי לשקף את השינויים.');
+                        location.reload(); // טעינה מחדש של הדף להצגת הנתונים החדשים
+                    } catch (error) {
+                        alert('שגיאה ביבוא הנתונים. ודא שזהו קובץ תקין.');
+                        console.error('Import error:', error);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+    </script>
+</body>
+</html>

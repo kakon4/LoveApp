@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אפליקציית האהבה שלנו - משחק פאזל</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffe6e6;
+            color: #333;
+            direction: rtl;
+        }
+        h1 {
+            color: #ff4d4d;
+            text-align: center;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #menu {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        #menu a {
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+        }
+        #menu a:hover {
+            background-color: #ff3333;
+        }
+        .image-picker {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .image-option {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 3px solid transparent;
+        }
+        .image-option:hover {
+            border: 3px solid #ff4d4d;
+        }
+        .selected {
+            border: 3px solid #ff4d4d;
+        }
+        #puzzle-container {
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            position: relative;
+            background-color: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        .puzzle-piece {
+            position: absolute;
+            background-size: 400px 400px;
+            border: 1px solid white;
+            box-sizing: border-box;
+            cursor: grab;
+        }
+        .puzzle-piece.dragging {
+            opacity: 0.8;
+            cursor: grabbing;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff3333;
+        }
+        .difficulty-selector {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .message {
+            text-align: center;
+            font-size: 1.2em;
+            color: #ff4d4d;
+            height: 30px;
+            margin-top: 10px;
+        }
+        .timer {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        #high-scores {
+            margin-top: 20px;
+        }
+        .high-scores-table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        .high-scores-table th, .high-scores-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .high-scores-table th {
+            background-color: #ff4d4d;
+            color: white;
+        }
+        .high-scores-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+        .modal input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>אפליקציית האהבה שלנו</h1>
+    
+      <div id="menu">
+        <a href="index.html">דף הבית</a>
+        <a href="gallery.html">גלריית תמונות</a>
+        <a href="notes.html">פתקי אהבה</a>
+        <a href="cats.html">חתולים טובים</a>
+        <a href="puzzle.html">משחק פאזל</a>
+        <a href="gifts.html">מתנות לקנייה</a>
+        <a href="countdown.html">ספירה לאחור</a>
+        <a href="bucketlist.html">רשימת יעדים</a>
+        <a href="memory.html">משחק זיכרון</a>
+        <a href="either-or.html">משחק או-או</a>
+    </div>
+
+    <div class="section">
+        <h2>משחק פאזל אהבה</h2>
+        
+        <div class="difficulty-selector">
+            <label for="difficulty">רמת קושי: </label>
+            <select id="difficulty">
+                <option value="3">קל (3x3)</option>
+                <option value="4" selected>בינוני (4x4)</option>
+                <option value="5">קשה (5x5)</option>
+            </select>
+        </div>
+
+        <h3>בחרי תמונה</h3>
+        <div class="image-picker">
+            <img src="images/escape.jpg" alt="תמונה 1" class="image-option selected" data-image="images/escape.jpg">
+            <img src="images/keis.jpg" alt="תמונה 2" class="image-option" data-image="images/keis.jpg">
+            <img src="images/tele.jpeg" alt="תמונה 3" class="image-option" data-image="images/tele.jpeg">
+        </div>
+
+        <div class="controls">
+            <button id="start-game">התחל משחק</button>
+            <button id="shuffle">ערבב מחדש</button>
+        </div>
+
+        <div class="timer">זמן: <span id="timer">00:00</span></div>
+        <div class="message" id="message"></div>
+
+        <div id="puzzle-container"></div>
+        
+        <div id="high-scores">
+            <h3>טבלת שיאים</h3>
+            <div class="difficulty-selector">
+                <label for="score-difficulty">הצג שיאים לרמה: </label>
+                <select id="score-difficulty">
+                    <option value="3">קל (3x3)</option>
+                    <option value="4" selected>בינוני (4x4)</option>
+                    <option value="5">קשה (5x5)</option>
+                </select>
+            </div>
+            <table class="high-scores-table">
+                <thead>
+                    <tr>
+                        <th>דירוג</th>
+                        <th>שם</th>
+                        <th>זמן</th>
+                    </tr>
+                </thead>
+                <tbody id="scores-list"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- מודל להזנת שם -->
+    <div id="name-modal" class="modal">
+        <div class="modal-content">
+            <h3>כל הכבוד! פתרת את הפאזל</h3>
+            <p>הזן את שמך לטבלת השיאים:</p>
+            <input type="text" id="player-name" placeholder="השם שלך" maxlength="20">
+            <button id="save-score">שמור</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedImage = 'images/date1.jpg';
+        let puzzlePieces = [];
+        let gridSize = 4;
+        let positions = [];
+        let timerInterval;
+        let startTime;
+        let gameStarted = false;
+        let currentTime = '';
+        
+        // Initialize with image options
+        document.querySelectorAll('.image-option').forEach(img => {
+            img.addEventListener('click', () => {
+                document.querySelectorAll('.image-option').forEach(i => i.classList.remove('selected'));
+                img.classList.add('selected');
+                selectedImage = img.getAttribute('data-image');
+            });
+        });
+        
+        // Update difficulty
+        document.getElementById('difficulty').addEventListener('change', (e) => {
+            gridSize = parseInt(e.target.value);
+        });
+        
+        // Change score display based on difficulty
+        document.getElementById('score-difficulty').addEventListener('change', (e) => {
+            displayHighScores(parseInt(e.target.value));
+        });
+        
+        // Start game button
+        document.getElementById('start-game').addEventListener('click', startGame);
+        
+        // Shuffle button
+        document.getElementById('shuffle').addEventListener('click', () => {
+            if (gameStarted) {
+                shufflePuzzle();
+                resetTimer();
+            }
+        });
+        
+        // Save score button
+        document.getElementById('save-score').addEventListener('click', () => {
+            const playerName = document.getElementById('player-name').value.trim() || 'אלמוני';
+            saveScore(playerName, currentTime);
+            document.getElementById('name-modal').style.display = 'none';
+        });
+        
+        // Function to start or restart the game
+        function startGame() {
+            // Clear previous game
+            const container = document.getElementById('puzzle-container');
+            container.innerHTML = '';
+            document.getElementById('message').textContent = '';
+            
+            // Set up the game
+            createPuzzlePieces();
+            shufflePuzzle();
+            resetTimer();
+            gameStarted = true;
+        }
+        
+        // Create puzzle pieces based on grid size
+        function createPuzzlePieces() {
+            puzzlePieces = [];
+            positions = [];
+            const container = document.getElementById('puzzle-container');
+            
+            // Determine piece size
+            const pieceWidth = 400 / gridSize;
+            const pieceHeight = 400 / gridSize;
+            
+            // Create the pieces
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    // Calculate position
+                    const top = y * pieceHeight;
+                    const left = x * pieceWidth;
+                    
+                    // Create piece element
+                    const piece = document.createElement('div');
+                    piece.className = 'puzzle-piece';
+                    piece.style.width = `${pieceWidth}px`;
+                    piece.style.height = `${pieceHeight}px`;
+                    piece.style.backgroundImage = `url(${selectedImage})`;
+                    piece.style.backgroundPosition = `-${left}px -${top}px`;
+                    piece.style.top = `${top}px`;
+                    piece.style.left = `${left}px`;
+                    
+                    // Store the correct position
+                    piece.setAttribute('data-correct-top', top);
+                    piece.setAttribute('data-correct-left', left);
+                    
+                    // Make it draggable
+                    piece.setAttribute('draggable', 'true');
+                    piece.addEventListener('dragstart', dragStart);
+                    piece.addEventListener('dragover', dragOver);
+                    piece.addEventListener('drop', drop);
+                    piece.addEventListener('dragend', checkWin);
+                    
+                    // Add to container
+                    container.appendChild(piece);
+                    
+                    // Store piece information
+                    puzzlePieces.push({
+                        element: piece,
+                        correctTop: top,
+                        correctLeft: left,
+                        currentTop: top,
+                        currentLeft: left
+                    });
+                    
+                    // Track position
+                    positions.push({ top, left });
+                }
+            }
+        }
+        
+        // Shuffle puzzle pieces
+        function shufflePuzzle() {
+            const shuffledPositions = [...positions].sort(() => Math.random() - 0.5);
+            
+            puzzlePieces.forEach((piece, index) => {
+                const newPos = shuffledPositions[index];
+                piece.element.style.top = `${newPos.top}px`;
+                piece.element.style.left = `${newPos.left}px`;
+                piece.currentTop = newPos.top;
+                piece.currentLeft = newPos.left;
+            });
+        }
+        
+        // Drag and drop functions
+        let draggedPiece;
+        
+        function dragStart(e) {
+            draggedPiece = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+        
+        function dragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+        
+        function drop(e) {
+            e.preventDefault();
+            if (this !== draggedPiece) {
+                // Swap positions
+                const draggedTop = draggedPiece.style.top;
+                const draggedLeft = draggedPiece.style.left;
+                
+                draggedPiece.style.top = this.style.top;
+                draggedPiece.style.left = this.style.left;
+                
+                this.style.top = draggedTop;
+                this.style.left = draggedLeft;
+                
+                // Update positions in our array
+                puzzlePieces.forEach(piece => {
+                    piece.currentTop = parseInt(piece.element.style.top);
+                    piece.currentLeft = parseInt(piece.element.style.left);
+                });
+            }
+            draggedPiece.classList.remove('dragging');
+        }
+        
+        // Check if puzzle is solved
+        function checkWin() {
+            // FIX: Ensure all pieces are checked with proper parsing
+            const isWin = puzzlePieces.every(piece => {
+                const currentTop = parseInt(piece.element.style.top);
+                const currentLeft = parseInt(piece.element.style.left);
+                const correctTop = parseInt(piece.element.getAttribute('data-correct-top'));
+                const correctLeft = parseInt(piece.element.getAttribute('data-correct-left'));
+                
+                return currentTop === correctTop && currentLeft === correctLeft;
+            });
+            
+            if (isWin) {
+                clearInterval(timerInterval);
+                currentTime = document.getElementById('timer').textContent;
+                document.getElementById('message').textContent = `מצוין! פתרת את הפאזל בזמן ${currentTime}`;
+                
+                // Show modal to enter name
+                document.getElementById('name-modal').style.display = 'block';
+            }
+        }
+        
+        // Timer functions
+        function resetTimer() {
+            clearInterval(timerInterval);
+            startTime = new Date().getTime();
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        function updateTimer() {
+            const now = new Date().getTime();
+            const elapsed = Math.floor((now - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+        }
+        
+        // High scores functions
+        function saveScore(playerName, time) {
+            // Convert time to seconds for sorting
+            const [min, sec] = time.split(':').map(Number);
+            const timeInSeconds = min * 60 + sec;
+            
+            // Get scores for current difficulty
+            const scoreKey = `puzzleScores_${gridSize}`;
+            let highScores = JSON.parse(localStorage.getItem(scoreKey) || '[]');
+            
+            // Add new score
+            highScores.push({
+                name: playerName,
+                time: time,
+                timeInSeconds: timeInSeconds
+            });
+            
+            // Sort by time (lowest first)
+            highScores.sort((a, b) => a.timeInSeconds - b.timeInSeconds);
+            
+            // Keep only top 10
+            highScores = highScores.slice(0, 10);
+            
+            // Save back to localStorage
+            localStorage.setItem(scoreKey, JSON.stringify(highScores));
+            
+            // Update display
+            displayHighScores(gridSize);
+        }
+        
+        function displayHighScores(difficulty = null) {
+            if (!difficulty) {
+                difficulty = parseInt(document.getElementById('score-difficulty').value);
+            }
+            
+            const scoreKey = `puzzleScores_${difficulty}`;
+            const highScores = JSON.parse(localStorage.getItem(scoreKey) || '[]');
+            const scoresList = document.getElementById('scores-list');
+            
+            // Clear current list
+            scoresList.innerHTML = '';
+            
+            // Add scores to table
+            highScores.forEach((score, index) => {
+                const row = document.createElement('tr');
+                
+                const rankCell = document.createElement('td');
+                rankCell.textContent = index + 1;
+                row.appendChild(rankCell);
+                
+                const nameCell = document.createElement('td');
+                nameCell.textContent = score.name;
+                row.appendChild(nameCell);
+                
+                const timeCell = document.createElement('td');
+                timeCell.textContent = score.time;
+                row.appendChild(timeCell);
+                
+                scoresList.appendChild(row);
+            });
+            
+            // Add empty rows if less than 5 scores
+            const emptyRows = 5 - highScores.length;
+            for (let i = 0; i < emptyRows; i++) {
+                const row = document.createElement('tr');
+                
+                const rankCell = document.createElement('td');
+                rankCell.textContent = highScores.length + i + 1;
+                row.appendChild(rankCell);
+                
+                const nameCell = document.createElement('td');
+                nameCell.textContent = '-';
+                row.appendChild(nameCell);
+                
+                const timeCell = document.createElement('td');
+                timeCell.textContent = '--:--';
+                row.appendChild(timeCell);
+                
+                scoresList.appendChild(row);
+            }
+        }
+        
+        // Initialize high scores display
+        displayHighScores(4); // Start with medium difficulty scores
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('name-modal');
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+    </script>
+</body>
+</html>

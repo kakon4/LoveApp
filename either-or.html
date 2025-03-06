@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק או-או</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffe6e6;
+            color: #333;
+            direction: rtl;
+            text-align: center;
+        }
+        h1 {
+            color: #ff4d4d;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #ff3333;
+        }
+        .hidden {
+            display: none;
+        }
+        .game-screen {
+            text-align: center;
+        }
+        .question {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .option-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+        }
+        .timer {
+            font-size: 24px;
+            margin: 10px 0;
+            color: #ff4d4d;
+        }
+        .player-select {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .selected {
+            background-color: #333;
+        }
+        .score {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .result-item {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            text-align: right;
+        }
+        .correct {
+            background-color: #d4ffda;
+        }
+        .incorrect {
+            background-color: #ffdddd;
+        }
+        #menu {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        #menu a {
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        #menu a:hover {
+            background-color: #ff3333;
+        }
+        .high-scores-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .high-scores-table th, .high-scores-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .high-scores-table th {
+            background-color: #ff4d4d;
+            color: white;
+        }
+        .high-scores-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 80%;
+            max-height: 80%;
+            margin: 10% auto;
+            overflow-y: auto;
+        }
+        .close-modal {
+            color: #aaa;
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-modal:hover {
+            color: #333;
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            background-color: #f0f0f0;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background-color: #ff4d4d;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .clear-scores-btn {
+            background-color: #666;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>אפליקציית האהבה שלנו</h1>
+    
+    <div id="menu">
+        <a href="index.html">דף הבית</a>
+        <a href="gallery.html">גלריית תמונות</a>
+        <a href="notes.html">פתקי אהבה</a>
+        <a href="cats.html">חתולים טובים</a>
+        <a href="puzzle.html">משחק פאזל</a>
+        <a href="gifts.html">מתנות לקנייה</a>
+        <a href="countdown.html">ספירה לאחור</a>
+        <a href="bucketlist.html">רשימת יעדים</a>
+        <a href="memory.html">משחק זיכרון</a>
+        <a href="either-or.html">משחק או-או</a>
+    </div>
+
+    <div class="section">
+        <h2>משחק או-או: כמה טוב אתם מכירים זה את זו?</h2>
+        
+        <!-- מסך פתיחה -->
+        <div id="intro-screen" class="game-screen">
+            <p>במשחק הזה תגלו כמה טוב אתם מכירים אחד את השני!</p>
+            <p>תענו על 10 שאלות "או-או", ובן/בת הזוג ינסו לנחש מה עניתם.</p>
+            <p><strong>שימו לב!</strong> ככל שתענו יותר מהר על ניחוש נכון, תקבלו יותר נקודות.</p>
+            <div class="button-group">
+                <button id="start-btn">התחל משחק</button>
+                <button id="view-scores-btn">צפה בטבלת שיאים</button>
+            </div>
+        </div>
+        
+        <!-- מסך בחירת שחקן -->
+        <div id="player-screen" class="game-screen hidden">
+            <h3>בחרו מי אתם:</h3>
+            <div class="player-select">
+                <button id="shani-btn" class="option-btn">שני</button>
+                <button id="arik-btn" class="option-btn">אריק</button>
+            </div>
+        </div>
+        
+        <!-- מסך שאלות - ללא טיימר -->
+        <div id="question-screen" class="game-screen hidden">
+            <h3>בחרו את התשובה שלכם:</h3>
+            <div id="question-text" class="question">טוען שאלה...</div>
+            <div class="options">
+                <button id="option-a" class="option-btn"></button>
+                <button id="option-b" class="option-btn"></button>
+            </div>
+            <div id="question-progress">שאלה <span id="current-question">1</span> מתוך 10</div>
+        </div>
+        
+        <!-- מסך ניחושים - עם טיימר -->
+        <div id="guess-screen" class="game-screen hidden">
+            <h3>נחשו מה <span id="player-name"></span> ענה/תה:</h3>
+            <div class="timer">זמן: <span id="guess-timer">10</span></div>
+            <div id="guess-text" class="question">טוען שאלה...</div>
+            <div class="options">
+                <button id="guess-a" class="option-btn"></button>
+                <button id="guess-b" class="option-btn"></button>
+            </div>
+            <div class="score">ניקוד: <span id="score">0</span></div>
+            <div id="guess-progress">שאלה <span id="current-guess">1</span> מתוך 10</div>
+        </div>
+        
+        <!-- מסך תוצאות -->
+        <div id="results-screen" class="game-screen hidden">
+            <h3>התוצאות:</h3>
+            <div class="score">ניקוד סופי: <span id="final-score">0</span></div>
+            <div id="results-list"></div>
+            <div id="high-scores-section">
+                <h3>טבלת שיאים - <span id="high-scores-player"></span></h3>
+                <table class="high-scores-table">
+                    <thead>
+                        <tr>
+                            <th>מקום</th>
+                            <th>ניקוד</th>
+                            <th>אחוז</th>
+                            <th>תאריך</th>
+                        </tr>
+                    </thead>
+                    <tbody id="high-scores-body"></tbody>
+                </table>
+            </div>
+            <button id="new-game-btn">משחק חדש</button>
+        </div>
+    </div>
+    
+    <!-- מודאל לטבלת שיאים -->
+    <div id="high-scores-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>טבלת שיאים</h3>
+            
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="shani-tab">שני</button>
+                <button class="tab-btn" data-tab="arik-tab">אריק</button>
+            </div>
+            
+            <div class="tab-content active" id="shani-tab">
+                <h4>שיאים של שני (כמה שני מכירה את אריק)</h4>
+                <table class="high-scores-table">
+                    <thead>
+                        <tr>
+                            <th>מקום</th>
+                            <th>ניקוד</th>
+                            <th>אחוז</th>
+                            <th>תאריך</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shani-scores-body"></tbody>
+                </table>
+                <button id="clear-shani-scores" class="clear-scores-btn">נקה שיאים</button>
+            </div>
+            
+            <div class="tab-content" id="arik-tab">
+                <h4>שיאים של אריק (כמה אריק מכיר את שני)</h4>
+                <table class="high-scores-table">
+                    <thead>
+                        <tr>
+                            <th>מקום</th>
+                            <th>ניקוד</th>
+                            <th>אחוז</th>
+                            <th>תאריך</th>
+                        </tr>
+                    </thead>
+                    <tbody id="arik-scores-body"></tbody>
+                </table>
+                <button id="clear-arik-scores" class="clear-scores-btn">נקה שיאים</button>
+            </div>
+            
+            <button id="close-modal-btn">סגור</button>
+        </div>
+    </div>
+    
+    <script>
+        // שאלות למשחק
+        const questions = [
+            { id: 1, text: "חורף או קיץ?", optionA: "חורף", optionB: "קיץ" },
+            { id: 2, text: "ים או בריכה?", optionA: "ים", optionB: "בריכה" },
+            { id: 3, text: "קולה או ספרייט?", optionA: "קולה", optionB: "ספרייט" },
+            { id: 4, text: "סדרה או סרט?", optionA: "סדרה", optionB: "סרט" },
+            { id: 5, text: "בוקר או לילה?", optionA: "בוקר", optionB: "לילה" },
+            { id: 6, text: "כלבים או חתולים?", optionA: "כלבים", optionB: "חתולים" },
+            { id: 7, text: "פיצה או המבורגר?", optionA: "פיצה", optionB: "המבורגר" },
+            { id: 8, text: "קפה או תה?", optionA: "קפה", optionB: "תה" },
+            { id: 9, text: "ספר או סרט?", optionA: "ספר", optionB: "סרט" },
+            { id: 10, text: "חופשה בחו״ל או בארץ?", optionA: "חו״ל", optionB: "בארץ" },
+            { id: 11, text: "יין או בירה?", optionA: "יין", optionB: "בירה" },
+            { id: 12, text: "פייסבוק או אינסטגרם?", optionA: "פייסבוק", optionB: "אינסטגרם" },
+            { id: 13, text: "נטפליקס או יס+?", optionA: "נטפליקס", optionB: "יס+" },
+            { id: 14, text: "חופשה בים או בהרים?", optionA: "ים", optionB: "הרים" },
+            { id: 15, text: "מתוק או מלוח?", optionA: "מתוק", optionB: "מלוח" },
+            { id: 16, text: "צפון או דרום?", optionA: "צפון", optionB: "דרום" },
+            { id: 17, text: "סושי או פסטה?", optionA: "סושי", optionB: "פסטה" },
+            { id: 18, text: "אנדרואיד או אייפון?", optionA: "אנדרואיד", optionB: "אייפון" },
+            { id: 19, text: "מקלחת בבוקר או בערב?", optionA: "בבוקר", optionB: "בערב" },
+            { id: 20, text: "קיץ בחוף או בבריכה?", optionA: "חוף", optionB: "בריכה" },
+            { id: 20, text: "קיץ בחוף או בבריכה?", optionA: "חוף", optionB: "בריכה" },
+            { id: 21, text: "לבשל בבית או לאכול בחוץ?", optionA: "לבשל בבית", optionB: "לאכול בחוץ" },
+            { id: 22, text: "נסיעה באוטו או ברכבת?", optionA: "אוטו", optionB: "רכבת" },
+            { id: 23, text: "ללמוד בבוקר או בערב?", optionA: "בבוקר", optionB: "בערב" },
+            { id: 24, text: "חופשה ספונטנית או מתוכננת?", optionA: "ספונטנית", optionB: "מתוכננת" },
+            { id: 25, text: "מסיבה גדולה או ערב קטן עם חברים?", optionA: "מסיבה גדולה", optionB: "ערב קטן" },
+            { id: 26, text: "טלוויזיה או נייד?", optionA: "טלוויזיה", optionB: "נייד" },
+            { id: 27, text: "מאכל חריף או לא חריף?", optionA: "חריף", optionB: "לא חריף" },
+            { id: 28, text: "טיול בטבע או בעיר?", optionA: "טבע", optionB: "עיר" },
+            { id: 29, text: "שוקולד חלב או מריר?", optionA: "חלב", optionB: "מריר" },
+            { id: 30, text: "חופשה פעילה או רגועה?", optionA: "פעילה", optionB: "רגועה" },
+            { id: 31, text: "מוזיקה ישראלית או לועזית?", optionA: "ישראלית", optionB: "לועזית" },
+            { id: 32, text: "פופקורן מתוק או מלוח?", optionA: "מתוק", optionB: "מלוח" },
+            { id: 33, text: "קניות באינטרנט או בחנות?", optionA: "אינטרנט", optionB: "חנות" },
+            { id: 34, text: "לצפות בסדרה או לשחק משחק?", optionA: "סדרה", optionB: "משחק" },
+            { id: 35, text: "גלידה וניל או שוקולד?", optionA: "וניל", optionB: "שוקולד" },
+            { id: 36, text: "לקום מוקדם או לישון מאוחר?", optionA: "לקום מוקדם", optionB: "לישון מאוחר" },
+            { id: 37, text: "לאכול למהר או לאט?", optionA: "מהר", optionB: "לאט" },
+            { id: 38, text: "לבזבז כסף על חוויות או חפצים?", optionA: "חוויות", optionB: "חפצים" },
+            { id: 39, text: "פיצה עם או בלי זיתים?", optionA: "עם זיתים", optionB: "בלי זיתים" },
+            { id: 40, text: "ספורט או משחקי מחשב?", optionA: "ספורט", optionB: "משחקי מחשב" },
+            { id: 41, text: "מקדונלדס או בורגר קינג?", optionA: "מקדונלדס", optionB: "בורגר קינג" },
+            { id: 42, text: "אוכל אסייתי או איטלקי?", optionA: "אסייתי", optionB: "איטלקי" },
+            { id: 43, text: "לנהל שיחה בטלפון או הודעות?", optionA: "טלפון", optionB: "הודעות" },
+            { id: 44, text: "מציאות או דמיון?", optionA: "מציאות", optionB: "דמיון" },
+            { id: 45, text: "חגים או סופי שבוע?", optionA: "חגים", optionB: "סופי שבוע" },
+            { id: 46, text: "להיות לבד או להיות בחברה?", optionA: "לבד", optionB: "בחברה" },
+            { id: 47, text: "בגדים נוחים או אופנתיים?", optionA: "נוחים", optionB: "אופנתיים" },
+            { id: 48, text: "לצפות בקולנוע או בבית?", optionA: "קולנוע", optionB: "בית" },
+            { id: 49, text: "לבשל לפי מתכון או לאלתר?", optionA: "לפי מתכון", optionB: "לאלתר" },
+            { id: 50, text: "להיות מתוכנן או ספונטני?", optionA: "מתוכנן", optionB: "ספונטני" },
+            { id: 51, text: "מכנסיים או שמלה?", optionA: "מכנסיים", optionB: "שמלה" },
+            { id: 52, text: "נעליים שטוחות או עקבים?", optionA: "שטוחות", optionB: "עקבים" },
+            { id: 53, text: "טיפוס הרים או צלילה?", optionA: "טיפוס הרים", optionB: "צלילה" },
+            { id: 54, text: "לנגן מוזיקה או להאזין?", optionA: "לנגן", optionB: "להאזין" },
+            { id: 55, text: "לחיות בכפר או בעיר?", optionA: "כפר", optionB: "עיר" },
+            { id: 56, text: "להיות מארח או אורח?", optionA: "מארח", optionB: "אורח" },
+            { id: 57, text: "מועדון או פאב?", optionA: "מועדון", optionB: "פאב" },
+            { id: 58, text: "שחייה או ריצה?", optionA: "שחייה", optionB: "ריצה" },
+            { id: 59, text: "להיות בבית או לצאת בגשם?", optionA: "בבית", optionB: "לצאת בגשם" },
+            { id: 60, text: "להיות קר או חם?", optionA: "קר", optionB: "חם" },
+            { id: 61, text: "פנקייק או וופל?", optionA: "פנקייק", optionB: "וופל" },
+            { id: 62, text: "סלט פירות או ירקות?", optionA: "פירות", optionB: "ירקות" },
+            { id: 63, text: "פסטיבל מוזיקה או הופעה אינטימית?", optionA: "פסטיבל", optionB: "הופעה אינטימית" },
+            { id: 64, text: "אוזניות גדולות או אירפודס?", optionA: "אוזניות גדולות", optionB: "אירפודס" },
+            { id: 65, text: "מבשלים או מזמינים אוכל?", optionA: "מבשלים", optionB: "מזמינים" },
+            { id: 66, text: "בירה או קוקטייל?", optionA: "בירה", optionB: "קוקטייל" },
+            { id: 67, text: "ג'ינס או מכנסי טרנינג?", optionA: "ג'ינס", optionB: "טרנינג" },
+            { id: 68, text: "להקשיב או לדבר?", optionA: "להקשיב", optionB: "לדבר" },
+            { id: 69, text: "מסיבת הפתעה או מסיבה מתוכננת?", optionA: "הפתעה", optionB: "מתוכננת" },
+            { id: 70, text: "מתנה יקרה או מתנה עם משמעות?", optionA: "יקרה", optionB: "עם משמעות" },
+            { id: 71, text: "להכין ארוחת בוקר או ארוחת ערב?", optionA: "ארוחת בוקר", optionB: "ארוחת ערב" },
+            { id: 72, text: "חופשה עם משפחה או חברים?", optionA: "משפחה", optionB: "חברים" },
+            { id: 73, text: "חדר כושר או פעילות בחוץ?", optionA: "חדר כושר", optionB: "פעילות בחוץ" },
+            { id: 74, text: "קניון או שוק?", optionA: "קניון", optionB: "שוק" },
+            { id: 75, text: "שיחת וידאו או הודעת טקסט?", optionA: "שיחת וידאו", optionB: "הודעת טקסט" },
+            { id: 76, text: "אירוע ספורט או הצגה?", optionA: "אירוע ספורט", optionB: "הצגה" },
+            { id: 77, text: "לבשל לבד או ביחד?", optionA: "לבד", optionB: "ביחד" },
+            { id: 78, text: "חוף ים עמוס או שקט?", optionA: "עמוס", optionB: "שקט" },
+            { id: 79, text: "לראות סרט פעמיים או סרט חדש?", optionA: "פעמיים", optionB: "סרט חדש" },
+            { id: 80, text: "חיית מחמד או ילד?", optionA: "חיית מחמד", optionB: "ילד" },
+            { id: 81, text: "תה חם או קר?", optionA: "חם", optionB: "קר" },
+            { id: 82, text: "טאקו או בוריטו?", optionA: "טאקו", optionB: "בוריטו" },
+            { id: 83, text: "טיסה או נסיעה ברכב?", optionA: "טיסה", optionB: "נסיעה ברכב" },
+            { id: 84, text: "מסעדה יוקרתית או דוכן אוכל?", optionA: "מסעדה יוקרתית", optionB: "דוכן אוכל" },
+            { id: 85, text: "לשיר או לרקוד?", optionA: "לשיר", optionB: "לרקוד" },
+            { id: 86, text: "מוזיאון או פארק שעשועים?", optionA: "מוזיאון", optionB: "פארק שעשועים" },
+            { id: 87, text: "אומנות או מדע?", optionA: "אומנות", optionB: "מדע" },
+            { id: 88, text: "סקי או גלישת גלים?", optionA: "סקי", optionB: "גלישת גלים" },
+            { id: 89, text: "מסיכת פנים או עיסוי?", optionA: "מסיכת פנים", optionB: "עיסוי" },
+            { id: 90, text: "חופשה עם הרבה פעילויות או מנוחה?", optionA: "פעילויות", optionB: "מנוחה" },
+            { id: 91, text: "טלוויזיה או יוטיוב?", optionA: "טלוויזיה", optionB: "יוטיוב" },
+            { id: 92, text: "חד פעמי או רב פעמי?", optionA: "חד פעמי", optionB: "רב פעמי" },
+            { id: 93, text: "לצפות לבד או עם אנשים?", optionA: "לבד", optionB: "עם אנשים" },
+            { id: 94, text: "להיות הנהג או הנוסע?", optionA: "נהג", optionB: "נוסע" },
+            { id: 95, text: "מטבח פתוח או סגור?", optionA: "פתוח", optionB: "סגור" },
+            { id: 96, text: "לילה בבית או במלון?", optionA: "בית", optionB: "מלון" },
+            { id: 97, text: "לבשל או לאפות?", optionA: "לבשל", optionB: "לאפות" },
+            { id: 98, text: "נופש הרפתקני או מפנק?", optionA: "הרפתקני", optionB: "מפנק" },
+            { id: 99, text: "חברים מעטים וקרובים או רבים?", optionA: "מעטים וקרובים", optionB: "רבים" },
+            { id: 100, text: "בגד ים שלם או ביקיני?", optionA: "שלם", optionB: "ביקיני" },
+            { id: 101, text: "קריוקי או ריקודים?", optionA: "קריוקי", optionB: "ריקודים" },
+            { id: 102, text: "תספורת קצרה או ארוכה?", optionA: "קצרה", optionB: "ארוכה" },
+            { id: 103, text: "ספר אלקטרוני או פיזי?", optionA: "אלקטרוני", optionB: "פיזי" },
+            { id: 104, text: "כדורגל או כדורסל?", optionA: "כדורגל", optionB: "כדורסל" },
+            { id: 105, text: "טפט או צבע לקיר?", optionA: "טפט", optionB: "צבע" },
+            { id: 106, text: "פינוק עצמי או פינוק מישהו אחר?", optionA: "עצמי", optionB: "מישהו אחר" },
+            { id: 107, text: "פסטה או אורז?", optionA: "פסטה", optionB: "אורז" },
+            { id: 108, text: "לחסוך או לבזבז?", optionA: "לחסוך", optionB: "לבזבז" },
+            { id: 109, text: "תחפושת מפחידה או מצחיקה?", optionA: "מפחידה", optionB: "מצחיקה" },
+            { id: 110, text: "להחליט מיד או לחשוב הרבה?", optionA: "להחליט מיד", optionB: "לחשוב הרבה" },
+            { id: 111, text: "להיות מנומס או ישיר?", optionA: "מנומס", optionB: "ישיר" },
+            { id: 112, text: "לחיות בעבר או בעתיד?", optionA: "בעבר", optionB: "בעתיד" },
+            { id: 113, text: "עוגת שוקולד או גבינה?", optionA: "שוקולד", optionB: "גבינה" },
+            { id: 114, text: "יום גשום או שמשי?", optionA: "גשום", optionB: "שמשי" },
+            { id: 115, text: "יום חופש בבית או בחוץ?", optionA: "בבית", optionB: "בחוץ" },
+            { id: 116, text: "סופ\"ש ספונטני או מתוכנן?", optionA: "ספונטני", optionB: "מתוכנן" },
+            { id: 117, text: "לצפות בספורט או לעשות ספורט?", optionA: "לצפות", optionB: "לעשות" },
+            { id: 118, text: "עבודה פיזית או משרדית?", optionA: "פיזית", optionB: "משרדית" },
+            { id: 119, text: "לישון עם חלון פתוח או סגור?", optionA: "פתוח", optionB: "סגור" },
+            { id: 120, text: "מוזיקה רועשת או שקטה?", optionA: "רועשת", optionB: "שקטה" },
+            { id: 121, text: "לצעוק או ללחוש?", optionA: "לצעוק", optionB: "ללחוש" },
+            { id: 122, text: "גיבור העל: ספיידרמן או באטמן?", optionA: "ספיידרמן", optionB: "באטמן" },
+            { id: 123, text: "ארוחת בוקר מתוקה או מלוחה?", optionA: "מתוקה", optionB: "מלוחה" },
+            { id: 124, text: "יום שני או יום רביעי?", optionA: "יום שני", optionB: "יום רביעי" },
+            { id: 125, text: "להתעורר מוקדם או לישון מאוחר?", optionA: "להתעורר מוקדם", optionB: "לישון מאוחר" },
+            { id: 126, text: "נסיעה ארוכה ברכב או טיסה קצרה?", optionA: "נסיעה ארוכה", optionB: "טיסה קצרה" },
+            { id: 127, text: "נופש באירופה או אסיה?", optionA: "אירופה", optionB: "אסיה" },
+            { id: 128, text: "זום או פגישה פנים אל פנים?", optionA: "זום", optionB: "פנים אל פנים" },
+            { id: 129, text: "עבודה מהבית או מהמשרד?", optionA: "מהבית", optionB: "מהמשרד" },
+            { id: 130, text: "מים קרים או פושרים?", optionA: "קרים", optionB: "פושרים" },
+            { id: 131, text: "רדיו או פודקאסט?", optionA: "רדיו", optionB: "פודקאסט" },
+            { id: 132, text: "אנשים חכמים או מצחיקים?", optionA: "חכמים", optionB: "מצחיקים" },
+            { id: 133, text: "נעליים או סנדלים?", optionA: "נעליים", optionB: "סנדלים" },
+            { id: 134, text: "מתנה כסף או מתנה ממשית?", optionA: "כסף", optionB: "מתנה ממשית" },
+            { id: 135, text: "מזגן או מאוורר?", optionA: "מזגן", optionB: "מאוורר" },
+            { id: 136, text: "לפתוח דלת לאנשים או שיפתחו לך?", optionA: "לפתוח", optionB: "שיפתחו לי" },
+            { id: 137, text: "עוגיות שוקולד צ'יפס או עוגיות חמאה?", optionA: "שוקולד צ'יפס", optionB: "חמאה" },
+            { id: 138, text: "ללכת יחפים או עם נעליים בבית?", optionA: "יחפים", optionB: "עם נעליים" },
+            { id: 139, text: "להיות ראשון או אחרון?", optionA: "ראשון", optionB: "אחרון" },
+            { id: 140, text: "לנסוע רחוק או להישאר קרוב?", optionA: "רחוק", optionB: "קרוב" },
+            { id: 141, text: "חורף בארץ או קיץ בחו\"ל?", optionA: "חורף בארץ", optionB: "קיץ בחו\"ל" },
+            { id: 142, text: "מצלמה או עיניים?", optionA: "מצלמה", optionB: "עיניים" },
+            { id: 143, text: "סיפור מפחיד או מצחיק?", optionA: "מפחיד", optionB: "מצחיק" },
+            { id: 144, text: "להיות ראשון בתור או אחרון?", optionA: "ראשון", optionB: "אחרון" },
+            { id: 145, text: "קנייה גדולה או קניות קטנות?", optionA: "גדולה", optionB: "קטנות" },
+            { id: 146, text: "דירה קטנה במרכז או גדולה בפריפריה?", optionA: "קטנה במרכז", optionB: "גדולה בפריפריה" },
+            { id: 147, text: "שוקולד חלב או לבן?", optionA: "חלב", optionB: "לבן" },
+            { id: 148, text: "גלידה בגביע או בכוס?", optionA: "גביע", optionB: "כוס" },
+            { id: 149, text: "מים מהברז או מבקבוק?", optionA: "מהברז", optionB: "מבקבוק" },
+            { id: 150, text: "עוגה או עוגיות?", optionA: "עוגה", optionB: "עוגיות" },
+            { id: 151, text: "דגנים או חביתה לארוחת בוקר?", optionA: "דגנים", optionB: "חביתה" },
+            { id: 152, text: "קפה שחור או הפוך?", optionA: "שחור", optionB: "הפוך" },
+            { id: 153, text: "לנוח בבית או לטייל בחוץ?", optionA: "לנוח בבית", optionB: "לטייל בחוץ" },
+            { id: 154, text: "סרט רומנטי או אקשן?", optionA: "רומנטי", optionB: "אקשן" },
+            { id: 155, text: "לענות או להתעלם מטלפון?", optionA: "לענות", optionB: "להתעלם" },
+            { id: 156, text: "פיצה עם או בלי אננס?", optionA: "עם אננס", optionB: "בלי אננס" },
+            { id: 157, text: "לשבת או לעמוד בהופעה?", optionA: "לשבת", optionB: "לעמוד" },
+            { id: 158, text: "להיות צעיר מידי או מבוגר מידי?", optionA: "צעיר מידי", optionB: "מבוגר מידי" },
+            { id: 159, text: "לשיר במקלחת או ברכב?", optionA: "במקלחת", optionB: "ברכב" },
+            { id: 160, text: "שעון דיגיטלי או אנלוגי?", optionA: "דיגיטלי", optionB: "אנלוגי" },
+            { id: 161, text: "בוקר שבת עם עיתון או סדרה?", optionA: "עיתון", optionB: "סדרה" },
+            { id: 162, text: "חיוך או צחוק?", optionA: "חיוך", optionB: "צחוק" },
+            { id: 163, text: "סלון או מרפסת?", optionA: "סלון", optionB: "מרפסת" },
+            { id: 164, text: "ארוחה ביתית או במסעדה?", optionA: "ביתית", optionB: "במסעדה" },
+            { id: 165, text: "חשמלי או ידני?", optionA: "חשמלי", optionB: "ידני" },
+            { id: 166, text: "לחפף או להשקיע?", optionA: "לחפף", optionB: "להשקיע" },
+            { id: 167, text: "משחק קלפים או קופסה?", optionA: "קלפים", optionB: "קופסה" },
+            { id: 168, text: "ריח פרחים או אפייה?", optionA: "פרחים", optionB: "אפייה" },
+            { id: 169, text: "חופשה עם או בלי אינטרנט?", optionA: "עם אינטרנט", optionB: "בלי אינטרנט" },
+            { id: 170, text: "תוכניות בוקר או ערב?", optionA: "בוקר", optionB: "ערב" },
+            { id: 171, text: "מחברת חלקה או משבצות?", optionA: "חלקה", optionB: "משבצות" },
+            { id: 172, text: "עט כחול או שחור?", optionA: "כחול", optionB: "שחור" },
+            { id: 173, text: "כלים חד פעמיים או רב פעמיים?", optionA: "חד פעמיים", optionB: "רב פעמיים" },
+            { id: 174, text: "רכב ידני או אוטומטי?", optionA: "ידני", optionB: "אוטומטי" },
+            { id: 175, text: "זריחה או שקיעה?", optionA: "זריחה", optionB: "שקיעה" },
+            { id: 176, text: "הופעה או מסיבה?", optionA: "הופעה", optionB: "מסיבה" },
+            { id: 177, text: "פחות או יותר?", optionA: "פחות", optionB: "יותר" },
+            { id: 178, text: "מבחן אמריקאי או פתוח?", optionA: "אמריקאי", optionB: "פתוח" },
+            { id: 179, text: "להיות עייף או רעב?", optionA: "עייף", optionB: "רעב" },
+            { id: 180, text: "פינג פונג או ביליארד?", optionA: "פינג פונג", optionB: "ביליארד" },
+            { id: 181, text: "בוקר אחרי המסיבה או ערב לפני?", optionA: "בוקר אחרי", optionB: "ערב לפני" },
+            { id: 182, text: "גרביים תואמות או שונות?", optionA: "תואמות", optionB: "שונות" },
+            { id: 183, text: "להזיז שעון קדימה או אחורה?", optionA: "קדימה", optionB: "אחורה" },
+            { id: 184, text: "גינה או מרפסת?", optionA: "גינה", optionB: "מרפסת" },
+            { id: 185, text: "לשבת ליד החלון או המעבר?", optionA: "חלון", optionB: "מעבר" },
+            { id: 186, text: "מחשב נייח או נייד?", optionA: "נייח", optionB: "נייד" },
+            { id: 187, text: "הרים או חופים?", optionA: "הרים", optionB: "חופים" },
+            { id: 188, text: "דמעות מצחוק או מעצב?", optionA: "מצחוק", optionB: "מעצב" },
+            { id: 189, text: "להקשיב לשיר אהוב שוב ושוב או לשמוע חדש?", optionA: "שיר אהוב", optionB: "שיר חדש" },
+            { id: 190, text: "להיות לבד בבית או עם אנשים?", optionA: "לבד", optionB: "עם אנשים" },
+            { id: 191, text: "סרטים עצובים או מפחידים?", optionA: "עצובים", optionB: "מפחידים" },
+            { id: 192, text: "ספורט קבוצתי או אישי?", optionA: "קבוצתי", optionB: "אישי" },
+            { id: 193, text: "לשחק משחקי קופסה או קלפים?", optionA: "קופסה", optionB: "קלפים" },
+            { id: 194, text: "להזמין אורחים או להתארח?", optionA: "להזמין", optionB: "להתארח" },
+            { id: 195, text: "בגדים גדולים מדי או קטנים מדי?", optionA: "גדולים מדי", optionB: "קטנים מדי" },
+            { id: 196, text: "עגבניות חתוכות או שלמות?", optionA: "חתוכות", optionB: "שלמות" },
+            { id: 197, text: "לקרוא ספר או לשמוע אודיו?", optionA: "לקרוא", optionB: "לשמוע אודיו" },
+            { id: 198, text: "לתכנן חופשה או לארגן מסיבה?", optionA: "לתכנן חופשה", optionB: "לארגן מסיבה" },
+            { id: 199, text: "להיות לבד או בודד?", optionA: "לבד", optionB: "בודד" },
+            { id: 200, text: "יום ראשון בבוקר או שישי בערב?", optionA: "יום ראשון בבוקר", optionB: "שישי בערב" },
+            { id: 201, text: "לשכוח או לזכור הכל?", optionA: "לשכוח", optionB: "לזכור הכל" },
+            { id: 202, text: "סוללה ריקה או אין קליטה?", optionA: "סוללה ריקה", optionB: "אין קליטה" },
+            { id: 203, text: "פיג'מה או בגדים נוחים?", optionA: "פיג'מה", optionB: "בגדים נוחים" },
+            { id: 204, text: "חופשה לבד או עם בן/ת הזוג?", optionA: "לבד", optionB: "עם בן/ת הזוג" },
+            { id: 205, text: "סוללה על 1% או 99%?", optionA: "1%", optionB: "99%" },
+            { id: 206, text: "להיות תמיד בחוץ או בפנים?", optionA: "בחוץ", optionB: "בפנים" },
+            { id: 207, text: "לחשוב על העבר או העתיד?", optionA: "העבר", optionB: "העתיד" },
+            { id: 208, text: "להיות ילד או מבוגר?", optionA: "ילד", optionB: "מבוגר" },
+            { id: 209, text: "מים מינרלים או מי ברז?", optionA: "מים מינרלים", optionB: "מי ברז" },
+            { id: 210, text: "לנהל או להיות מנוהל?", optionA: "לנהל", optionB: "להיות מנוהל" },
+            { id: 211, text: "לחפש או למצוא?", optionA: "לחפש", optionB: "למצוא" },
+            { id: 212, text: "לשלם במזומן או באשראי?", optionA: "במזומן", optionB: "באשראי" },
+            { id: 213, text: "לדעת יותר מדי או פחות מדי?", optionA: "יותר מדי", optionB: "פחות מדי" },
+            { id: 214, text: "כוס מלאה או חצי מלאה?", optionA: "מלאה", optionB: "חצי מלאה" },
+            { id: 215, text: "לחשוב או להרגיש?", optionA: "לחשוב", optionB: "להרגיש" },
+            { id: 216, text: "להיזכר בכל דבר שלמדת או לא לשכוח שום דבר שראית?", optionA: "להיזכר בכל דבר שלמדת", optionB: "לא לשכוח שום דבר שראית" },
+            { id: 217, text: "לשטוף כלים ביד או במדיח?", optionA: "ביד", optionB: "במדיח" },
+            { id: 218, text: "להחמיא או לקבל מחמאה?", optionA: "להחמיא", optionB: "לקבל מחמאה" },
+            { id: 219, text: "להצטער על מה שעשית או על מה שלא עשית?", optionA: "על מה שעשית", optionB: "על מה שלא עשית" },
+            { id: 220, text: "להיות גבוה מדי או נמוך מדי?", optionA: "גבוה מדי", optionB: "נמוך מדי" },
+            { id: 221, text: "תה עם חלב או בלי?", optionA: "עם חלב", optionB: "בלי חלב" },
+            { id: 222, text: "קפה עם סוכר או בלי?", optionA: "עם סוכר", optionB: "בלי סוכר" },
+            { id: 223, text: "לצאת מוקדם או לישון מאוחר?", optionA: "לצאת מוקדם", optionB: "לישון מאוחר" },
+            { id: 224, text: "לחסוך זמן או כסף?", optionA: "זמן", optionB: "כסף" },
+            { id: 225, text: "לשלוט או לוותר על שליטה?", optionA: "לשלוט", optionB: "לוותר על שליטה" },
+            { id: 226, text: "להיות בלתי נראה או לקרוא מחשבות?", optionA: "בלתי נראה", optionB: "לקרוא מחשבות" },
+            { id: 227, text: "לדעת מתי תמות או איך?", optionA: "מתי", optionB: "איך" },
+            { id: 228, text: "להיות עשיר או מפורסם?", optionA: "עשיר", optionB: "מפורסם" },
+            { id: 229, text: "לנצח תמיד או אף פעם לא להפסיד?", optionA: "לנצח תמיד", optionB: "אף פעם לא להפסיד" },
+            { id: 230, text: "לשאול שאלות או לענות עליהן?", optionA: "לשאול", optionB: "לענות" },
+            { id: 231, text: "לחדש סדרה אהובה או להתחיל חדשה?", optionA: "לחדש אהובה", optionB: "להתחיל חדשה" },
+            { id: 232, text: "להיתקע במעלית או ברכבת?", optionA: "במעלית", optionB: "ברכבת" },
+            { id: 233, text: "להאזין לשיחה או להקליט אותה?", optionA: "להאזין", optionB: "להקליט" },
+            { id: 234, text: "לצאת לבילוי ספונטני או מתוכנן?", optionA: "ספונטני", optionB: "מתוכנן" },
+            { id: 235, text: "תוכנית טלוויזיה או סרט?", optionA: "תוכנית", optionB: "סרט" },
+            { id: 236, text: "לגור ליד ההורים או רחוק מהם?", optionA: "ליד", optionB: "רחוק" },
+            { id: 237, text: "טלפון עם סוללה או חיבור לאינטרנט?", optionA: "סוללה", optionB: "אינטרנט" },
+            { id: 238, text: "להיות נחמד או צודק?", optionA: "נחמד", optionB: "צודק" },
+            { id: 239, text: "בית חכם או רגיל?", optionA: "חכם", optionB: "רגיל" },
+            { id: 240, text: "להיות בריא לגמרי או עשיר מאוד?", optionA: "בריא", optionB: "עשיר" },
+            { id: 241, text: "להרגיש חום או קור?", optionA: "חום", optionB: "קור" },
+            { id: 242, text: "לישון יותר או להרוויח יותר?", optionA: "לישון יותר", optionB: "להרוויח יותר" },
+            { id: 243, text: "מתנה יקרה אחת או הרבה קטנות?", optionA: "יקרה אחת", optionB: "הרבה קטנות" },
+            { id: 244, text: "לחיות לנצח או לדעת מתי תמות?", optionA: "לחיות לנצח", optionB: "לדעת מתי תמות" },
+            { id: 245, text: "חוכמה או יופי?", optionA: "חוכמה", optionB: "יופי" },
+            { id: 246, text: "לדבר ברור או לכתוב ברור?", optionA: "לדבר ברור", optionB: "לכתוב ברור" },
+            { id: 247, text: "לחזור לגיל 5 או לקפוץ לגיל 90?", optionA: "לחזור ל-5", optionB: "לקפוץ ל-90" },
+            { id: 248, text: "חורף קר או קיץ חם?", optionA: "חורף קר", optionB: "קיץ חם" },
+            { id: 249, text: "לחיות ללא מוזיקה או סרטים?", optionA: "ללא מוזיקה", optionB: "ללא סרטים" },
+            { id: 250, text: "לשלוט בזמן או במרחב?", optionA: "בזמן", optionB: "במרחב" },
+            { id: 251, text: "ללכת לגן חיות או לפארק שעשועים?", optionA: "גן חיות", optionB: "פארק שעשועים" },
+            { id: 252, text: "שבוע ללא אינטרנט או ללא מקלחת?", optionA: "ללא אינטרנט", optionB: "ללא מקלחת" },
+            { id: 253, text: "מכנסיים קצרים או ארוכים?", optionA: "קצרים", optionB: "ארוכים" },
+            { id: 254, text: "הייטק או לואו-טק?", optionA: "הייטק", optionB: "לואו-טק" },
+            { id: 255, text: "לשחק או לראות אחרים משחקים?", optionA: "לשחק", optionB: "לראות אחרים" },
+            { id: 256, text: "להיות אופטימי או ריאליסט?", optionA: "אופטימי", optionB: "ריאליסט" },
+            { id: 257, text: "לעשות ספורט או להירגע?", optionA: "ספורט", optionB: "להירגע" },
+            { id: 258, text: "קטניות או דגנים?", optionA: "קטניות", optionB: "דגנים" },
+            { id: 259, text: "ביגוד פרקטי או אופנתי?", optionA: "פרקטי", optionB: "אופנתי" },
+            { id: 260, text: "פעילות ימית או יבשתית?", optionA: "ימית", optionB: "יבשתית" },
+            { id: 261, text: "קולה או פפסי?", optionA: "קולה", optionB: "פפסי" },
+            { id: 262, text: "משחק כדורגל או כדורסל?", optionA: "כדורגל", optionB: "כדורסל" },
+            { id: 263, text: "לארח מפגש חברתי או להיות מוזמן?", optionA: "לארח", optionB: "להיות מוזמן" },
+            { id: 264, text: "להיות האדם הכי צעיר או הכי מבוגר בחדר?", optionA: "הכי צעיר", optionB: "הכי מבוגר" },
+            { id: 265, text: "לגור במקום חם או קר?", optionA: "חם", optionB: "קר" },
+            { id: 266, text: "לעבוד קשה או חכם?", optionA: "קשה", optionB: "חכם" },
+            { id: 267, text: "להיעלב בקלות או להיות אדיש?", optionA: "להיעלב בקלות", optionB: "להיות אדיש" },
+            { id: 268, text: "לעבוד לבד או בצוות?", optionA: "לבד", optionB: "בצוות" },
+            { id: 269, text: "לאכול מתוק לפני או אחרי הארוחה?", optionA: "לפני", optionB: "אחרי" },
+            { id: 270, text: "בגדים בהירים או כהים?", optionA: "בהירים", optionB: "כהים" },
+            { id: 271, text: "מתנה מושקעת או יקרה?", optionA: "מושקעת", optionB: "יקרה" },
+            { id: 272, text: "להיות אחראי או חסר דאגות?", optionA: "אחראי", optionB: "חסר דאגות" },
+            { id: 273, text: "אייפון או סמסונג?", optionA: "אייפון", optionB: "סמסונג" },
+            { id: 274, text: "לאכול את אותו הדבר כל יום או משהו חדש?", optionA: "אותו הדבר", optionB: "משהו חדש" },
+            { id: 275, text: "חיות מחמד או צמחים?", optionA: "חיות מחמד", optionB: "צמחים" },
+            { id: 276, text: "ציורים או תמונות?", optionA: "ציורים", optionB: "תמונות" },
+            { id: 277, text: "פיצה עבה או דקה?", optionA: "עבה", optionB: "דקה" },
+            { id: 278, text: "לענות או לשאול?", optionA: "לענות", optionB: "לשאול" },
+            { id: 279, text: "לנגן מוזיקה או ליצור אומנות?", optionA: "לנגן מוזיקה", optionB: "ליצור אומנות" },
+            { id: 280, text: "קומדיה או דרמה?", optionA: "קומדיה", optionB: "דרמה" },
+            { id: 281, text: "עבודה מהנה או משכורת גבוהה?", optionA: "עבודה מהנה", optionB: "משכורת גבוהה" },
+            { id: 282, text: "יום חופש ספונטני או מתוכנן?", optionA: "ספונטני", optionB: "מתוכנן" },
+            { id: 283, text: "אוכל חריף או מתוק?", optionA: "חריף", optionB: "מתוק" },
+            { id: 284, text: "לישון עם או בלי שמיכה?", optionA: "עם שמיכה", optionB: "בלי שמיכה" },
+            { id: 285, text: "ססגוני או מינימליסטי?", optionA: "ססגוני", optionB: "מינימליסטי" },
+            { id: 286, text: "ספורט חורף או קיץ?", optionA: "חורף", optionB: "קיץ" },
+            { id: 287, text: "להזדקן או להישאר צעיר?", optionA: "להזדקן", optionB: "להישאר צעיר" },
+            { id: 288, text: "חתונה גדולה או קטנה?", optionA: "גדולה", optionB: "קטנה" },
+            { id: 289, text: "אוכל ביתי או מסעדות?", optionA: "ביתי", optionB: "מסעדות" },
+            { id: 290, text: "טיפול רפואי מסורתי או אלטרנטיבי?", optionA: "מסורתי", optionB: "אלטרנטיבי" },
+            { id: 291, text: "לעבוד מהבית או מהמשרד?", optionA: "מהבית", optionB: "מהמשרד" },
+            { id: 292, text: "תורם כליה או מקבל?", optionA: "תורם", optionB: "מקבל" },
+            { id: 293, text: "משימות קלות רבות או קשה אחת?", optionA: "קלות רבות", optionB: "קשה אחת" },
+            { id: 294, text: "לבית או לעבודה?", optionA: "לבית", optionB: "לעבודה" },
+            { id: 295, text: "לרקוד או לשיר?", optionA: "לרקוד", optionB: "לשיר" },
+            { id: 296, text: "פרחים או שוקולד?", optionA: "פרחים", optionB: "שוקולד" },
+            { id: 297, text: "לילה או יום?", optionA: "לילה", optionB: "יום" },
+            { id: 298, text: "עיסוי גב או רגליים?", optionA: "גב", optionB: "רגליים" },
+            { id: 299, text: "להיות מפורסם בחיים או אחרי המוות?", optionA: "בחיים", optionB: "אחרי המוות" },
+            { id: 300, text: "לחיות 100 שנים או חיים קצרים ומשמעותיים?", optionA: "100 שנים", optionB: "חיים קצרים ומשמעותיים" },
+            { id: 301, text: "כלב או חתול?", optionA: "כלב", optionB: "חתול" },
+            { id: 302, text: "לחיות בעבר או בעתיד?", optionA: "בעבר", optionB: "בעתיד" },
+            { id: 303, text: "לנהל או להיות מונהג?", optionA: "לנהל", optionB: "להיות מונהג" },
+            { id: 304, text: "דיבור או שתיקה?", optionA: "דיבור", optionB: "שתיקה" },
+            { id: 305, text: "מציאותי או חולם?", optionA: "מציאותי", optionB: "חולם" },
+            { id: 306, text: "אמת כואבת או שקר נעים?", optionA: "אמת כואבת", optionB: "שקר נעים" },
+            { id: 307, text: "להיבחר או לבחור?", optionA: "להיבחר", optionB: "לבחור" },
+            { id: 308, text: "לנצח את הבוס האחרון או לסיים את המשחק ב-100%?", optionA: "לנצח את הבוס", optionB: "לסיים ב-100%" },
+            { id: 309, text: "לחיות על אי בודד או בדירה שכורה?", optionA: "אי בודד", optionB: "דירה שכורה" },
+            { id: 310, text: "שרירים או מוח?", optionA: "שרירים", optionB: "מוח" },
+            { id: 311, text: "לשחות או לעוף?", optionA: "לשחות", optionB: "לעוף" },
+            { id: 312, text: "כוח או חכמה?", optionA: "כוח", optionB: "חכמה" },
+            { id: 313, text: "תפוז או תפוח?", optionA: "תפוז", optionB: "תפוח" },
+            { id: 314, text: "לאכול או לישון?", optionA: "לאכול", optionB: "לישון" },
+            { id: 315, text: "להיות גבוה או נמוך?", optionA: "גבוה", optionB: "נמוך" },
+            { id: 316, text: "מפורסם או עשיר?", optionA: "מפורסם", optionB: "עשיר" },
+            { id: 317, text: "לעבוד בעבודה אהובה או מרוויחה?", optionA: "אהובה", optionB: "מרוויחה" },
+            { id: 318, text: "פטרייה או אננס על פיצה?", optionA: "פטרייה", optionB: "אננס" },
+            { id: 319, text: "לדעת כל השפות או לנגן בכל הכלים?", optionA: "כל השפות", optionB: "כל הכלים" },
+            { id: 320, text: "להעדיף פרטיות או נוחות?", optionA: "פרטיות", optionB: "נוחות" },
+            { id: 321, text: "לשחות בבריכה או באגם?", optionA: "בריכה", optionB: "אגם" },
+            { id: 322, text: "להיות גאון או מאושר?", optionA: "גאון", optionB: "מאושר" },
+            { id: 323, text: "לנצח בלוטו או למצוא אהבה אמיתית?", optionA: "לוטו", optionB: "אהבה אמיתית" },
+            { id: 324, text: "להיות לבד לנצח או אף פעם לא להיות לבד?", optionA: "לבד לנצח", optionB: "אף פעם לא לבד" },
+            { id: 325, text: "טלפון נייד או מחשב נייד?", optionA: "טלפון", optionB: "מחשב" },
+            { id: 326, text: "פודקאסט או ספר דיגיטלי?", optionA: "פודקאסט", optionB: "ספר דיגיטלי" },
+            { id: 327, text: "לשנות את העבר או לדעת את העתיד?", optionA: "לשנות את העבר", optionB: "לדעת את העתיד" },
+            { id: 328, text: "מיטה רכה או קשה?", optionA: "רכה", optionB: "קשה" },
+            { id: 329, text: "לעבוד מעט ולהרוויח מעט או הרבה ולהרוויח הרבה?", optionA: "מעט", optionB: "הרבה" },
+            { id: 330, text: "תורמוס או בוטנים?", optionA: "תורמוס", optionB: "בוטנים" },
+            { id: 331, text: "לחקור את החלל או את הים העמוק?", optionA: "חלל", optionB: "ים עמוק" },
+            { id: 332, text: "מכשיר חדש או בגד חדש?", optionA: "מכשיר", optionB: "בגד" },
+            { id: 333, text: "מדיח כלים או מכונת כביסה?", optionA: "מדיח", optionB: "מכונת כביסה" },
+            { id: 334, text: "נסיעות עסקים או חופש?", optionA: "עסקים", optionB: "חופש" },
+            { id: 335, text: "להיות יצירתי או אנליטי?", optionA: "יצירתי", optionB: "אנליטי" },
+            { id: 336, text: "משלוח או לאסוף לבד?", optionA: "משלוח", optionB: "לאסוף לבד" },
+            { id: 337, text: "להתלבש רשמי או יומיומי?", optionA: "רשמי", optionB: "יומיומי" },
+            { id: 338, text: "לחסן או לא לחסן?", optionA: "לחסן", optionB: "לא לחסן" },
+            { id: 339, text: "לעבוד במשרה מלאה או חלקית?", optionA: "מלאה", optionB: "חלקית" },
+            { id: 340, text: "גלידה בגביע או בגלידרייה?", optionA: "גביע", optionB: "גלידרייה" },
+            { id: 341, text: "טיול עצמאי או מאורגן?", optionA: "עצמאי", optionB: "מאורגן" },
+            { id: 342, text: "לכעוס כשצריך או לשמור על קור רוח?", optionA: "לכעוס", optionB: "קור רוח" },
+            { id: 343, text: "שיחות טלפון או מפגשים?", optionA: "שיחות", optionB: "מפגשים" },
+            { id: 344, text: "לחיות בעיר או בכפר?", optionA: "עיר", optionB: "כפר" },
+            { id: 345, text: "רשיון נהיגה או תואר אקדמי?", optionA: "רשיון נהיגה", optionB: "תואר אקדמי" },
+            { id: 346, text: "איכות או כמות?", optionA: "איכות", optionB: "כמות" },
+            { id: 347, text: "לדעת מתי או איך תמות?", optionA: "מתי", optionB: "איך" },
+            { id: 348, text: "לקנות בית או לשכור?", optionA: "לקנות", optionB: "לשכור" },
+            { id: 349, text: "סדר או כאוס?", optionA: "סדר", optionB: "כאוס" },
+            { id: 350, text: "מים קרים או פושרים?", optionA: "קרים", optionB: "פושרים" },
+            { id: 351, text: "לדעת אם יש חוצנים או מה קורה אחרי המוות?", optionA: "חוצנים", optionB: "אחרי המוות" },
+            { id: 352, text: "להיות תייר או מדריך?", optionA: "תייר", optionB: "מדריך" },
+            { id: 353, text: "לשבת או לעמוד?", optionA: "לשבת", optionB: "לעמוד" },
+            { id: 354, text: "להיות עשיר ובודד או עני עם חברים?", optionA: "עשיר ובודד", optionB: "עני עם חברים" },
+            { id: 355, text: "לחיות במזרח או במערב?", optionA: "מזרח", optionB: "מערב" },
+            { id: 356, text: "לחיות 100 שנה בעבר או בעתיד?", optionA: "בעבר", optionB: "בעתיד" },
+            { id: 357, text: "טלוויזיה או ספר?", optionA: "טלוויזיה", optionB: "ספר" },
+            { id: 358, text: "לקרוא מחשבות או לראות את העתיד?", optionA: "לקרוא מחשבות", optionB: "לראות את העתיד" },
+            { id: 359, text: "באולינג או מיני גולף?", optionA: "באולינג", optionB: "מיני גולף" },
+            { id: 360, text: "להישאר צעיר או להיות חכם?", optionA: "צעיר", optionB: "חכם" },
+            { id: 361, text: "היכולת לעוף או לנשום מתחת למים?", optionA: "לעוף", optionB: "לנשום מתחת למים" },
+            { id: 362, text: "להיות בתוך ספר או סרט?", optionA: "ספר", optionB: "סרט" },
+            { id: 363, text: "רובוט או יוניקורן?", optionA: "רובוט", optionB: "יוניקורן" },
+            { id: 364, text: "להיות טיפש ושמח או חכם ועצוב?", optionA: "טיפש ושמח", optionB: "חכם ועצוב" },
+            { id: 365, text: "לנסוע לכל מקום ברכב או רק למקומות מסוימים בטלפורטציה?", optionA: "רכב לכל מקום", optionB: "טלפורטציה למקומות מסוימים" },
+            { id: 367, text: "בגד אחד ליום שלם או החלפת בגדים?", optionA: "בגד אחד", optionB: "החלפת בגדים" },
+            { id: 368, text: "פיצה עם או בלי רוטב עגבניות?", optionA: "עם רוטב", optionB: "בלי רוטב" },
+            { id: 369, text: "להיות פיה או דרקון?", optionA: "פיה", optionB: "דרקון" },
+            { id: 370, text: "לדבר עם חיות או להבין את כל השפות?", optionA: "לדבר עם חיות", optionB: "להבין שפות" },
+            { id: 371, text: "לשנות את הגובה או את הגיל שלך בכל רגע?", optionA: "לשנות גובה", optionB: "לשנות גיל" },
+            { id: 372, text: "לנוע בזמן או במרחב?", optionA: "בזמן", optionB: "במרחב" },
+            { id: 373, text: "להריח טוב או להיראות טוב?", optionA: "להריח טוב", optionB: "להיראות טוב" },
+            { id: 374, text: "להיות מהיר מאוד או חזק מאוד?", optionA: "מהיר", optionB: "חזק" },
+            { id: 375, text: "להיות בלתי נראה או לקרוא מחשבות?", optionA: "בלתי נראה", optionB: "לקרוא מחשבות" },
+            { id: 376, text: "לדעת איך תמות או מתי תמות?", optionA: "איך", optionB: "מתי" },
+            { id: 377, text: "שוקולד חם או שוקו קר?", optionA: "שוקולד חם", optionB: "שוקו קר" },
+            { id: 378, text: "לדעת לנגן בכל כלי נגינה או לרקוד כל סגנון?", optionA: "לנגן", optionB: "לרקוד" },
+            { id: 379, text: "לזכור כל מה שאת/ה קורא/ת או שומע/ת?", optionA: "קורא/ת", optionB: "שומע/ת" },
+            { id: 380, text: "להסתדר בלי אינטרנט או בלי חשמל?", optionA: "בלי אינטרנט", optionB: "בלי חשמל" },
+            { id: 381, text: "לקום מאוחר או ללכת לישון מוקדם?", optionA: "לקום מאוחר", optionB: "לישון מוקדם" },
+            { id: 382, text: "כוח על טבעי או חיים ארוכים?", optionA: "כוח על טבעי", optionB: "חיים ארוכים" },
+            { id: 383, text: "לגור במדינה זרה או בעיר הולדתך?", optionA: "מדינה זרה", optionB: "עיר הולדתך" },
+            { id: 384, text: "לעבוד לבד או בצוות?", optionA: "לבד", optionB: "בצוות" },
+            { id: 385, text: "לעוף או להיות בלתי נראה?", optionA: "לעוף", optionB: "בלתי נראה" },
+            { id: 386, text: "דירה בתל אביב או וילה בפריפריה?", optionA: "דירה בתל אביב", optionB: "וילה בפריפריה" },
+            { id: 387, text: "לחיות לנצח או לחיות 100 שנה מושלמות?", optionA: "לנצח", optionB: "100 שנה מושלמות" },
+            { id: 388, text: "שיש לך כסף או זמן?", optionA: "כסף", optionB: "זמן" },
+            { id: 389, text: "לאכול רק פסטה או רק אורז?", optionA: "פסטה", optionB: "אורז" },
+            { id: 390, text: "להיות האדם החכם ביותר או המאושר ביותר?", optionA: "החכם ביותר", optionB: "המאושר ביותר" },
+            { id: 391, text: "לחיות מתחת למים או בחלל?", optionA: "מתחת למים", optionB: "בחלל" },
+            { id: 392, text: "משחק מחשב או משחק קופסה?", optionA: "מחשב", optionB: "קופסה" },
+            { id: 393, text: "לחיות ללא טלפון נייד או ללא טלוויזיה?", optionA: "ללא טלפון", optionB: "ללא טלוויזיה" },
+            { id: 394, text: "להיות חכם ומכוער או טיפש ויפה?", optionA: "חכם ומכוער", optionB: "טיפש ויפה" },
+            { id: 395, text: "לדעת את כל שפות העולם או לדבר עם חיות?", optionA: "שפות העולם", optionB: "לדבר עם חיות" },
+            { id: 396, text: "להכין קפה או תה?", optionA: "קפה", optionB: "תה" },
+            { id: 397, text: "להיות בתאונת דרכים או להיתקע במעלית?", optionA: "תאונת דרכים", optionB: "להיתקע במעלית" },
+            { id: 398, text: "משחק כדורסל או כדורגל?", optionA: "כדורסל", optionB: "כדורגל" },
+            { id: 399, text: "לשתות רק מים או לאכול רק פירות?", optionA: "רק מים", optionB: "רק פירות" },
+           
+        
+
+        ];
+        
+        // משתני משחק
+        let selectedPlayer = "";
+        let selectedQuestions = [];
+        let answers = [];
+        let guesses = [];
+        let currentIndex = 0;
+        let score = 0;
+        let timerInterval;
+        let timerValue = 10;
+        let gameSessionId = null; // מזהה ייחודי למשחק הנוכחי
+        
+        // אלמנטים
+        const introScreen = document.getElementById('intro-screen');
+        const playerScreen = document.getElementById('player-screen');
+        const questionScreen = document.getElementById('question-screen');
+        const guessScreen = document.getElementById('guess-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const highScoresModal = document.getElementById('high-scores-modal');
+        
+        // כפתורים
+        const startBtn = document.getElementById('start-btn');
+        const viewScoresBtn = document.getElementById('view-scores-btn');
+        const shaniBtn = document.getElementById('shani-btn');
+        const arikBtn = document.getElementById('arik-btn');
+        const optionABtn = document.getElementById('option-a');
+        const optionBBtn = document.getElementById('option-b');
+        const guessABtn = document.getElementById('guess-a');
+        const guessBBtn = document.getElementById('guess-b');
+        const newGameBtn = document.getElementById('new-game-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const closeModalX = document.querySelector('.close-modal');
+        const clearShaniScoresBtn = document.getElementById('clear-shani-scores');
+        const clearArikScoresBtn = document.getElementById('clear-arik-scores');
+        
+        // מאזיני אירועים
+        document.addEventListener('DOMContentLoaded', function() {
+            // כפתורים
+            startBtn.addEventListener('click', startGame);
+            viewScoresBtn.addEventListener('click', viewHighScores);
+            shaniBtn.addEventListener('click', () => selectPlayer('shani'));
+            arikBtn.addEventListener('click', () => selectPlayer('arik'));
+            optionABtn.addEventListener('click', () => selectAnswer('A'));
+            optionBBtn.addEventListener('click', () => selectAnswer('B'));
+            guessABtn.addEventListener('click', () => selectGuess('A'));
+            guessBBtn.addEventListener('click', () => selectGuess('B'));
+            newGameBtn.addEventListener('click', resetGame);
+            closeModalBtn.addEventListener('click', closeModal);
+            closeModalX.addEventListener('click', closeModal);
+            
+            // ניקוי שיאים
+            clearShaniScoresBtn.addEventListener('click', () => clearHighScores('shani'));
+            clearArikScoresBtn.addEventListener('click', () => clearHighScores('arik'));
+            
+            // מאזיני אירועים לטאבים
+            document.querySelectorAll('.tab-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+            
+            // ניקוי כפילויות קיימות בנתונים
+            cleanupDuplicateScores('shani');
+            cleanupDuplicateScores('arik');
+        });
+        
+        // פונקציה לניקוי כפילויות קיימות
+        function cleanupDuplicateScores(player) {
+            const scoreKey = `either_or_scores_${player}`;
+            let highScores = JSON.parse(localStorage.getItem(scoreKey) || '[]');
+            
+            if (highScores.length <= 1) return; // אין צורך בניקוי
+            
+            // צור מערך חדש ללא כפילויות
+            const uniqueScores = [];
+            const seen = new Set();
+            
+            highScores.forEach(score => {
+                // יצירת מפתח ייחודי לכל שיא
+                const key = `${score.score}-${score.percentage}`;
+                
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    uniqueScores.push(score);
+                }
+            });
+            
+            // מיון מחדש
+            uniqueScores.sort((a, b) => b.score - a.score || b.percentage - a.percentage);
+            
+            // שמירה בחזרה
+            localStorage.setItem(scoreKey, JSON.stringify(uniqueScores));
+        }
+        
+        // פונקציית ניקוי שיאים
+        function clearHighScores(player) {
+            if (confirm(`האם אתה בטוח שברצונך למחוק את כל השיאים של ${player === 'shani' ? 'שני' : 'אריק'}?`)) {
+                const scoreKey = `either_or_scores_${player}`;
+                localStorage.setItem(scoreKey, '[]');
+                loadTabHighScores(player);
+            }
+        }
+        
+        // פונקציות משחק
+        function startGame() {
+            // יצירת מזהה ייחודי למשחק
+            gameSessionId = Date.now();
+            
+            // הסתר מסך פתיחה והצג מסך בחירת שחקן
+            introScreen.classList.add('hidden');
+            playerScreen.classList.remove('hidden');
+            
+            // איפוס משתני משחק
+            selectedPlayer = "";
+            selectedQuestions = [];
+            answers = [];
+            guesses = [];
+            currentIndex = 0;
+            score = 0;
+        }
+        
+        function selectPlayer(player) {
+            selectedPlayer = player;
+            
+            // בחירת 10 שאלות אקראיות
+            selectedQuestions = getRandomQuestions(10);
+            
+            // מעבר למסך שאלות
+            playerScreen.classList.add('hidden');
+            questionScreen.classList.remove('hidden');
+            
+            // הצגת השאלה הראשונה
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            // הצגת נתוני השאלה הנוכחית
+            const question = selectedQuestions[currentIndex];
+            document.getElementById('question-text').textContent = question.text;
+            optionABtn.textContent = question.optionA;
+            optionBBtn.textContent = question.optionB;
+            document.getElementById('current-question').textContent = currentIndex + 1;
+        }
+        
+        function selectAnswer(option) {
+            // שמירת התשובה
+            answers[currentIndex] = option;
+            
+            // מעבר לשאלה הבאה או למצב ניחוש
+            currentIndex++;
+            if (currentIndex < selectedQuestions.length) {
+                showQuestion();
+            } else {
+                // סיימנו את כל השאלות, מעבר לניחוש
+                currentIndex = 0;
+                startGuessing();
+            }
+        }
+        
+        function startGuessing() {
+            // מעבר למסך ניחוש
+            questionScreen.classList.add('hidden');
+            guessScreen.classList.remove('hidden');
+            
+            // הצגת שם השחקן
+            document.getElementById('player-name').textContent = selectedPlayer === 'shani' ? 'שני' : 'אריק';
+            
+            // הצגת הניחוש הראשון
+            showGuess();
+        }
+        
+        function showGuess() {
+            // אם השחקן לא ענה על השאלה הזו, דלג עליה
+            if (answers[currentIndex] === undefined) {
+                currentIndex++;
+                if (currentIndex < selectedQuestions.length) {
+                    showGuess();
+                } else {
+                    showResults();
+                }
+                return;
+            }
+            
+            // הצגת נתוני השאלה לניחוש
+            const question = selectedQuestions[currentIndex];
+            document.getElementById('guess-text').textContent = question.text;
+            guessABtn.textContent = question.optionA;
+            guessBBtn.textContent = question.optionB;
+            document.getElementById('current-guess').textContent = currentIndex + 1;
+            
+            // איפוס הטיימר
+            resetTimer();
+        }
+        
+        function selectGuess(option) {
+            // שמירת הניחוש
+            guesses[currentIndex] = option;
+            
+            // עצירת הטיימר
+            clearInterval(timerInterval);
+            
+            // בדיקה אם הניחוש נכון
+            const isCorrect = guesses[currentIndex] === answers[currentIndex];
+            
+            if (isCorrect) {
+                // חישוב ניקוד לפי זמן תגובה
+                let points = 0;
+                const timeLeft = timerValue;
+                
+                if (timeLeft >= 9) {
+                    points = 50; // הכי מהר - הכי הרבה נקודות
+                } else if (timeLeft >= 6) {
+                    points = 40;
+                } else if (timeLeft >= 3) {
+                    points = 30;
+                } else if (timeLeft >= 1) {
+                    points = 20;
+                } else {
+                    points = 10; // הכי איטי - הכי מעט נקודות
+                }
+                
+                score += points;
+                document.getElementById('score').textContent = score;
+            }
+            
+            // מעבר לניחוש הבא או לתוצאות
+            currentIndex++;
+            if (currentIndex < selectedQuestions.length) {
+                setTimeout(showGuess, 500);
+            } else {
+                // סיימנו את כל הניחושים, מעבר לתוצאות
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            // מעבר למסך תוצאות
+            guessScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+            
+            // הצגת הניקוד הסופי
+            document.getElementById('final-score').textContent = score;
+            
+            // הצגת התוצאות המפורטות
+            const resultsList = document.getElementById('results-list');
+            resultsList.innerHTML = '';
+            
+            // עבור על כל השאלות שנענו
+            for (let i = 0; i < selectedQuestions.length; i++) {
+                if (answers[i] === undefined) continue;
+                
+                const question = selectedQuestions[i];
+                const answer = answers[i];
+                const guess = guesses[i];
+                const isCorrect = answer === guess;
+                
+                const resultItem = document.createElement('div');
+                resultItem.className = `result-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                resultItem.innerHTML = `
+                    <div><strong>${question.text}</strong></div>
+                    <div>תשובה: ${answer === 'A' ? question.optionA : question.optionB}</div>
+                    <div>ניחוש: ${guess === 'A' ? question.optionA : question.optionB} ${isCorrect ? '✓' : '✗'}</div>
+                `;
+                
+                resultsList.appendChild(resultItem);
+            }
+            
+            // שמירת השיא
+            saveHighScore();
+            
+            // הצגת טבלת שיאים
+            showGameHighScores();
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerValue = 10;
+            document.getElementById('guess-timer').textContent = timerValue;
+            
+            timerInterval = setInterval(() => {
+                timerValue--;
+                document.getElementById('guess-timer').textContent = timerValue;
+                
+                if (timerValue <= 0) {
+                    clearInterval(timerInterval);
+                    
+                    // אם לא נבחר ניחוש, בחר באקראי
+                    const randomGuess = Math.random() < 0.5 ? 'A' : 'B';
+                    selectGuess(randomGuess);
+                }
+            }, 1000);
+        }
+        
+        function getRandomQuestions(count) {
+            const shuffled = [...questions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+        
+        function saveHighScore() {
+            // מי שניחש הוא השחקן ההפוך ממי שענה
+            const guessingPlayer = selectedPlayer === 'shani' ? 'arik' : 'shani';
+            const scoreKey = `either_or_scores_${guessingPlayer}`;
+            
+            let highScores = JSON.parse(localStorage.getItem(scoreKey) || '[]');
+            
+            const newScore = {
+                id: gameSessionId,  // מזהה ייחודי למשחק הנוכחי
+                score: score,
+                maxScore: selectedQuestions.length * 50,
+                percentage: Math.round((score / (selectedQuestions.length * 50)) * 100),
+                mode: 'timer',
+                date: new Date().toISOString()
+            };
+            
+            // נחפש האם כבר יש משחק עם אותו מזהה
+            const existingIndex = highScores.findIndex(item => item.id === gameSessionId);
+            
+            if (existingIndex !== -1) {
+                // אם כבר יש משחק עם אותו מזהה, נחליף אותו
+                highScores[existingIndex] = newScore;
+            } else {
+                // אחרת נוסיף משחק חדש
+                highScores.push(newScore);
+            }
+            
+            // מיון מחדש
+            highScores.sort((a, b) => b.score - a.score);
+            highScores = highScores.slice(0, 10); // רק 10 שיאים
+            
+            localStorage.setItem(scoreKey, JSON.stringify(highScores));
+        }
+        
+        function showGameHighScores() {
+            // מי שניחש הוא השחקן ההפוך ממי שענה
+            const guessingPlayer = selectedPlayer === 'shani' ? 'arik' : 'shani';
+            const playerName = guessingPlayer === 'shani' ? 'שני' : 'אריק';
+            
+            // עדכון כותרת טבלת השיאים
+            document.getElementById('high-scores-player').textContent = playerName;
+            
+            // טעינת השיאים
+            const scoreKey = `either_or_scores_${guessingPlayer}`;
+            const highScores = JSON.parse(localStorage.getItem(scoreKey) || '[]');
+            const scoresBody = document.getElementById('high-scores-body');
+            
+            scoresBody.innerHTML = '';
+            
+            if (highScores.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="4">אין עדיין שיאים</td>`;
+                scoresBody.appendChild(row);
+            } else {
+                highScores.forEach((score, index) => {
+                    const date = new Date(score.date);
+                    const formattedDate = new Intl.DateTimeFormat('he-IL', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    }).format(date);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${score.score}</td>
+                        <td>${score.percentage}%</td>
+                        <td>${formattedDate}</td>
+                    `;
+                    
+                    scoresBody.appendChild(row);
+                });
+            }
+        }
+        
+        function viewHighScores() {
+            // טעינת שיאים לשתי הקטגוריות
+            loadTabHighScores('shani');
+            loadTabHighScores('arik');
+            
+            // הצגת המודאל
+            highScoresModal.style.display = 'block';
+        }
+        
+        function loadTabHighScores(player) {
+            const scoreKey = `either_or_scores_${player}`;
+            const highScores = JSON.parse(localStorage.getItem(scoreKey) || '[]');
+            const scoresBody = document.getElementById(`${player}-scores-body`);
+            
+            scoresBody.innerHTML = '';
+            
+            if (highScores.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="4">אין עדיין שיאים</td>`;
+                scoresBody.appendChild(row);
+            } else {
+                highScores.forEach((score, index) => {
+                    const date = new Date(score.date);
+                    const formattedDate = new Intl.DateTimeFormat('he-IL', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    }).format(date);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${score.score}</td>
+                        <td>${score.percentage}%</td>
+                        <td>${formattedDate}</td>
+                    `;
+                    
+                    scoresBody.appendChild(row);
+                });
+            }
+        }
+        
+        function switchTab(tabId) {
+            // הסרת המחלקה "active" מכל הטאבים
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // הוספת המחלקה "active" לטאב הנבחר
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        function closeModal() {
+            highScoresModal.style.display = 'none';
+        }
+        
+        function resetGame() {
+            // חזרה למסך הפתיחה
+            resultsScreen.classList.add('hidden');
+            introScreen.classList.remove('hidden');
+            
+            // איפוס משתני משחק
+            selectedPlayer = "";
+            selectedQuestions = [];
+            answers = [];
+            guesses = [];
+            currentIndex = 0;
+            score = 0;
+            document.getElementById('score').textContent = '0';
+            
+            // עצירת הטיימר אם פעיל
+            clearInterval(timerInterval);
+        }
+        
+        // סגירת המודאל בלחיצה מחוץ לתוכן שלו
+        window.addEventListener('click', function(event) {
+            if (event.target === highScoresModal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
